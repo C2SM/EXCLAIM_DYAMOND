@@ -4,7 +4,6 @@
 
 #SBATCH --account cwd01
 #SBATCH --job-name=Diamond_R02B06L120
-#SBATCH --time=00:10:00
 #SBATCH --uenv=icon/25.2:v3
 #SBATCH --view=default
 
@@ -225,7 +224,7 @@ date
 finish_status=$(cat "${status_file}")
 echo
 echo "============================"
-echo "Script run successfully: ${finish_status}"
+echo "Script ran successfully: ${finish_status}"
 echo "============================"
 echo
 
