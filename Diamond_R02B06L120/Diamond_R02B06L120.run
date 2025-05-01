@@ -4,8 +4,6 @@
 
 #SBATCH --account cwd01
 #SBATCH --job-name=Diamond_R02B06L120
-#SBATCH --nodes=2
-#SBATCH --ntasks-per-node=4
 #SBATCH --time=00:10:00
 #SBATCH --uenv=icon/25.2:v3
 #SBATCH --view=default
@@ -52,17 +50,18 @@ ecrad_data=${basedir}/externals/ecrad/data
 
 EXPNAME="Diamond_${RES}L120"
 #  - ML - use default value and export to allow benchmarks with different experiment directories
-: "${EXPDIR:=${SCRIPT_DIR}/experiments/${EXPNAME}_main}"
-export EXPDIR
+[ -z "${EXPDIR}" ] && export EXPDIR="${SCRIPT_DIR}/experiments/${EXPNAME}_main"
 
 # ----------------------------------------------------------------------------
-# Domain decomposition
+# Compute resources
 
 #  - ML - use default values and export to allow benchmarks varying the number of nodes
-: "${no_of_nodes:=2}"
-: "${num_io_procs:=1}"
-export no_of_nodes num_io_procs
+[ -z "${no_of_nodes}" ] && export no_of_nodes=2
+[ -z "${num_io_procs}" ] && export num_io_procs=1
 mpi_procs_pernode=4
+(( mpi_total_procs = no_of_nodes * mpi_procs_pernode )); export mpi_total_procs
+
+[ -z "${WALL_TIME}" ] && export WALL_TIME="00:10:00"
 
 # ----------------------------------------------------------------------------
 # blocking length
@@ -78,8 +77,8 @@ nblocks_e=1
 
 # How to start and submit the icon model
 # --------------------------------------
-START="srun -n $(( no_of_nodes * mpi_procs_pernode )) --ntasks-per-node ${mpi_procs_pernode} --threads-per-core=1 --distribution=cyclic  ${SCRIPT_DIR}/run_wrapper.sh"
-SUBMIT="sbatch --output=${EXPDIR}/${EXPNAME}.%j.o ${SCRIPT_PATH}"
+START="srun -n ${mpi_total_procs} --ntasks-per-node ${mpi_procs_pernode} --threads-per-core=1 --distribution=cyclic  ${SCRIPT_DIR}/run_wrapper.sh"
+SUBMIT="sbatch --nodes=${no_of_nodes}  --time=${WALL_TIME} --output=${EXPDIR}/${EXPNAME}.%j.o ${SCRIPT_PATH}"
 
 # ----------------------------------------------------------------------------
 # Time settings
