@@ -58,7 +58,7 @@ EXPNAME="Diamond_${RES}L120"
 [ -z "${no_of_nodes}" ] && export no_of_nodes=2
 [ -z "${num_io_procs}" ] && export num_io_procs=1
 mpi_procs_pernode=4
-(( mpi_total_procs = no_of_nodes * mpi_procs_pernode )); export mpi_total_procs
+(( mpi_total_procs = no_of_nodes * mpi_procs_pernode ))
 
 [ -z "${WALL_TIME}" ] && export WALL_TIME="00:10:00"
 
