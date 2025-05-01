@@ -1,0 +1,238 @@
+#! /bin/bash
+
+# ===== SBATCH OPTIONS =======================================================
+
+#SBATCH --account cwd01
+#SBATCH --job-name=Diamond_R02B06L120
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=4
+#SBATCH --time=00:10:00
+#SBATCH --uenv=icon/25.2:v3
+#SBATCH --view=default
+
+# ===== INIT =================================================================
+
+set +x
+ulimit -s unlimited
+
+: "${FIRST_EXECUTION:=true}"
+
+if [ -n "${SLURM_JOB_ID:-}" ]; then
+    if [ "${FIRST_EXECUTION}" == "true" ]; then
+        echo "ERROR: Please first execute me from the command line"
+        exit 1
+    fi
+    SUBMITTED="true"
+    SCRIPT_PATH=$(scontrol show job "${SLURM_JOB_ID}" | awk -F= '/Command=/{print $2}')
+else
+    SUBMITTED="false"
+    SCRIPT_PATH=$(realpath "${BASH_SOURCE[0]}")
+fi
+SCRIPT_DIR=$(dirname "${SCRIPT_PATH}")
+
+set | grep SLURM
+
+# ===== SOURCED FILES ========================================================
+
+# Source secondary files
+source "${SCRIPT_DIR}/namelists.sh"
+source "${SCRIPT_DIR}/tools.sh"
+
+# ===== SETTINGS =============================================================
+
+basedir="/capstor/store/cscs/userlab/cwd01/leclairm/exclaim_compilation_liskov/archive/icon_25.2_v3/icon-exclaim/build_dsl"
+ICON_EXE="${basedir}/bin/icon"
+
+RES=R02B06
+gridID=0021
+
+input_folder="/capstor/scratch/cscs/ppothapa/data_from_santis/grids/MPI_grids/atmo/${RES}"
+icon_base_data_dir="${basedir}/data"
+ecrad_data=${basedir}/externals/ecrad/data
+
+EXPNAME="Diamond_${RES}L120"
+#  - ML - use default value and export to allow benchmarks with different experiment directories
+: "${EXPDIR:=${SCRIPT_DIR}/experiments/${EXPNAME}_main}"
+export EXPDIR
+
+# ----------------------------------------------------------------------------
+# Domain decomposition
+
+#  - ML - use default values and export to allow benchmarks varying the number of nodes
+: "${no_of_nodes:=2}"
+: "${num_io_procs:=1}"
+export no_of_nodes num_io_procs
+mpi_procs_pernode=4
+
+# ----------------------------------------------------------------------------
+# blocking length
+
+nproma=85000   # 491520 / n_compute nodes = 12288., was 13500 before
+#R2B4 edges 30720, 
+#n1 =30700,  nproma_sub=800 probably
+#n2 = 15400, nproma_sub = 1500
+#n3 =10500, nproma_sub = 1500
+nproma_sub=5000
+nblocks_c=0
+nblocks_e=1
+
+# How to start and submit the icon model
+# --------------------------------------
+START="srun -n $(( no_of_nodes * mpi_procs_pernode )) --ntasks-per-node ${mpi_procs_pernode} --threads-per-core=1 --distribution=cyclic  ${SCRIPT_DIR}/run_wrapper.sh"
+SUBMIT="sbatch --output=${EXPDIR}/${EXPNAME}.%j.o ${SCRIPT_PATH}"
+
+# ----------------------------------------------------------------------------
+# Time settings
+
+start_date="2020-01-20T00:00:00"
+end_date="2020-01-20T12:00:00"
+
+checkpoint_interval="PT6H"
+restart_interval="PT6H"
+
+# ----------------------------------------------------------------------------
+# Runtime environment variables
+
+export NVCOMPILER_ACC_SYNCHRONOUS=1
+export FI_CXI_SAFE_DEVMEM_COPY_THRESHOLD=0
+export FI_CXI_RX_MATCH_MODE=software
+export FI_MR_CACHE_MONITOR=disabled
+export MPICH_GPU_SUPPORT_ENABLED=1
+export NVCOMPILER_ACC_DEFER_UPLOADS=1
+export NVCOMPILER_TERM=trace
+export CUDA_BUFFER_PAGE_IN_THRESHOLD_MS=0.001
+
+export OMP_NUM_THREADS=1
+export ICON_THREADS=1
+export OMP_SCHEDULE=static,1
+export OMP_DYNAMIC="false"
+export OMP_STACKSIZE=200M
+
+# ----------------------------------------------------------------------------
+# Namelist parameters
+
+# Time steps
+timestep="PT180S"
+timestep_phy=180
+
+# From CLM namelist for accumulating few variables within time of Interest. Exclusively for Rain
+PRECIP_INTERVAL=PT1H # interval for accumulating tot_prec in ISO8601 (needs to be consistent with HOUT_INC above)
+RUNOFF_INTERVAL=PT3H # interval for accumulating runoff in ISO8601 (needs to be consistent with HOUT_INC above)
+MAXT_INTERVAL=PT3H # interval for min/max of 2m-temperature in ISO8601 (needs to be consistent with HOUT_INC above)
+MELT_INTERVAL=PT3H # interval for accumulating snow_melt in ISO8601 (needs to be consistent with HOUT_INC above)
+
+# Soil Layers for TERRA
+ZML_SOIL="0.005,0.02,0.06,0.18,0.54,1.62,4.86,14.58"
+
+# ----------------------------------------------------------------------------
+# Set various input paths
+
+atmo_dyn_grid_dir=${input_folder}
+atmo_dyn_grid="icon_grid_${gridID}_${RES}_G.nc"
+analysis_file=${input_folder}/initial_conditions/ifs2icon_2020012000_${gridID}_${RES}_G.nc 
+extpar_file=${input_folder}/external_parameter/external_parameter_icon_${gridID}_${RES}_G_tiles.nc
+
+sst_file_dir=/capstor/scratch/cscs/ppothapa/Dyamond_W_SO_SST_PREP/ESACCI-SST/final_output_daily_R02B06
+ice_file_dir=/capstor/scratch/cscs/ppothapa/Dyamond_W_SO_SST_PREP/ESACCI-SEAICE/final_output_daily
+
+ozone_file_dir=${input_folder}/ozone/r0001
+
+aero_kinne_dir=/capstor/store/cscs/exclaim/excp01/ppothapa/data_from_santis/grids/MPI_grids/atmo/R02B06/aerosol_kinne/r0001
+
+# ===== FIRST NON SUBMITTED EXECUTION ========================================
+
+# In the case of a first execution of that script directly from the command
+# line, submit it again after creating the EXPDIR and setting the job stdout to
+# within EXPDIR
+
+if [ "${SUBMITTED}" == "false" ]; then
+    export FIRST_EXECUTION="false"
+    if [ ! -d "${EXPDIR}" ]; then
+        echo "EXPDIR does not exist. Creating ${EXPDIR}..."
+        mkdir -p "${EXPDIR}"
+    else
+        echo "EXPDIR already exists at ${EXPDIR}"
+    fi
+    ${SUBMIT}
+    exit 0
+fi
+
+# ===== SET UP EXPDIR ========================================================
+
+pushd "${EXPDIR}">/dev/null 2>&1 || exit 1
+
+# ----------------------------------------------------------------------------
+# Build namelists
+
+# namelist files
+atmo_namelist="${EXPDIR}/NAMELIST_${EXPNAME}"
+master_namelist="${EXPDIR}/icon_master.namelist"
+
+# ICON master namelist
+icon_master_nml
+
+# Main part of the atmospheric namelist (everything except output streams)
+main_atmo_nml
+
+# Output streams. Comment out to deactivate
+output_stream_1
+output_stream_2
+output_stream_3
+output_stream_4
+output_stream_5
+output_stream_6
+output_stream_7
+output_stream_8
+output_stream_9
+output_stream_10
+
+# ----------------------------------------------------------------------------
+# Link input files and check some data availability
+
+ln -sf ${analysis_file} ./ifs2icon_2005110100_${gridID}_${RES}_G.nc
+ln -sf ${extpar_file} ./external_parameter_icon_${gridID}_${RES}_G_tiles.nc
+ln -sf ${atmo_dyn_grid_dir}/${atmo_dyn_grid} .
+ln -sf ${ecrad_data} ./ecrad_data
+ln -sf ${icon_base_data_dir}/ECHAM6_CldOptProps.nc .
+ln -sf ${icon_base_data_dir}/rrtmg_lw.nc .
+
+ln -sf ${sst_file_dir}/SST_*_*_icon_grid_${gridID}_${RES}_G.nc .
+ln -sf ${ice_file_dir}/CI_*_*_icon_grid_${gridID}_${RES}_G.nc .
+
+ln -sf ${ozone_file_dir}/bc_ozone_2*.nc .
+
+# Kinne background aerosols for the year 1850 (irad_aero=12, filename without year)
+ln -sf  ${aero_kinne_dir}/bc_aeropt_kinne_lw_b16_coa.nc      bc_aeropt_kinne_lw_b16_coa.nc
+ln -sf  ${aero_kinne_dir}/bc_aeropt_kinne_sw_b14_coa.nc      bc_aeropt_kinne_sw_b14_coa.nc
+
+# use exclusively Kinne background aerosols for the year 1850, filename without year (irad_aero=12)
+ln -sf  ${aero_kinne_dir}/bc_aeropt_kinne_sw_b14_fin_1865.nc bc_aeropt_kinne_sw_b14_fin.nc
+
+check_available "initial data" ${analysis_file}
+check_available "grid file" ${atmo_dyn_grid}
+check_available "extpar file" ${extpar_file}
+
+check_available "icon executable" ${ICON_EXE}
+
+# ===== RUN THE MODEL ========================================================
+
+status_file="${EXPDIR}/finish.status"
+rm -f "${status_file}"
+
+date
+${START} ${ICON_EXE}
+date
+
+finish_status=$(cat "${status_file}")
+echo
+echo "============================"
+echo "Script run successfully: ${finish_status}"
+echo "============================"
+echo
+
+# Resubmit in case of restart
+if [[ "${finish_status}" == " RESTART" ]]; then
+    echo "submitting next chunk"
+    export lrestart=.true.
+    ${SUBMIT}
+fi
