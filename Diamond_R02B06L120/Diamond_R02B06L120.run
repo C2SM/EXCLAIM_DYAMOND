@@ -33,7 +33,7 @@ set | grep SLURM
 
 # Source secondary files
 source "${SCRIPT_DIR}/namelists.sh"
-source "${SCRIPT_DIR}/tools.sh"
+source "${SCRIPT_DIR}/../tools.sh"
 
 # ===== SETTINGS =============================================================
 
@@ -200,8 +200,8 @@ ln -sf ${ice_file_dir}/CI_*_*_icon_grid_${gridID}_${RES}_G.nc .
 ln -sf ${ozone_file_dir}/bc_ozone_2*.nc .
 
 # Kinne background aerosols for the year 1850 (irad_aero=12, filename without year)
-ln -sf  ${aero_kinne_dir}/bc_aeropt_kinne_lw_b16_coa.nc      bc_aeropt_kinne_lw_b16_coa.nc
-ln -sf  ${aero_kinne_dir}/bc_aeropt_kinne_sw_b14_coa.nc      bc_aeropt_kinne_sw_b14_coa.nc
+ln -sf  ${aero_kinne_dir}/bc_aeropt_kinne_lw_b16_coa.nc .
+ln -sf  ${aero_kinne_dir}/bc_aeropt_kinne_sw_b14_coa.nc .
 
 # use exclusively Kinne background aerosols for the year 1850, filename without year (irad_aero=12)
 ln -sf  ${aero_kinne_dir}/bc_aeropt_kinne_sw_b14_fin_1865.nc bc_aeropt_kinne_sw_b14_fin.nc

@@ -1,4 +1,4 @@
-#!/usr/bin/
+#!/usr/bin/bash
 
 check_available(){
    echo -n "Check for ${1} ... "
