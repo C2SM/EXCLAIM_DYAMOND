@@ -55,7 +55,7 @@ EXPNAME="Diamond_${RES}L120"
 # Compute resources
 
 #  - ML - use default values and export to allow benchmarks varying the number of nodes
-[ -z "${no_of_nodes}" ] && export no_of_nodes=100
+[ -z "${no_of_nodes}" ] && export no_of_nodes=140
 [ -z "${num_io_procs}" ] && export num_io_procs=10
 mpi_procs_pernode=4
 (( mpi_total_procs = no_of_nodes * mpi_procs_pernode ))
