@@ -32,8 +32,12 @@ set | grep SLURM
 # ===== SOURCED FILES ========================================================
 
 # Source secondary files
-source "${SCRIPT_DIR}/namelists.sh"
-source "${SCRIPT_DIR}/../tools.sh"
+safe_source(){
+    [ -f "${1}" ] && source "${1}" || (echo "ERROR: ${1} not found"; exit 1)
+}
+
+safe_source "${SCRIPT_DIR}/namelists.sh"
+safe_source "${SCRIPT_DIR}/../Common/tools.sh"
 
 # ===== SETTINGS =============================================================
 
@@ -48,7 +52,7 @@ icon_base_data_dir="${basedir}/data"
 ecrad_data=${basedir}/externals/ecrad/data
 
 EXPNAME="Diamond_${RES}L120"
-#  - ML - use default value and export to allow benchmarks with different experiment directories
+#  - ML - use default value and export to allow restarts from custom EXPDIR
 [ -z "${EXPDIR}" ] && export EXPDIR="${SCRIPT_DIR}/experiments/${EXPNAME}_main"
 
 # ----------------------------------------------------------------------------
@@ -76,7 +80,7 @@ nblocks_e=1
 
 # How to start and submit the icon model
 # --------------------------------------
-START="srun -n ${mpi_total_procs} --ntasks-per-node ${mpi_procs_pernode} --threads-per-core=1 --distribution=cyclic  ${SCRIPT_DIR}/run_wrapper.sh"
+START="srun -n ${mpi_total_procs} --ntasks-per-node ${mpi_procs_pernode} --threads-per-core=1 --distribution=cyclic  ${SCRIPT_DIR}/../Common/run_wrapper.sh"
 SUBMIT="sbatch --nodes=${no_of_nodes}  --time=${WALL_TIME} --output=${EXPDIR}/${EXPNAME}.%j.o ${SCRIPT_PATH}"
 
 # ----------------------------------------------------------------------------
@@ -126,7 +130,8 @@ ZML_SOIL="0.005,0.02,0.06,0.18,0.54,1.62,4.86,14.58"
 # Set various input paths
 
 atmo_dyn_grid="icon_grid_${gridID}_${RES}_G.nc"
-analysis_file=${input_folder}/initial_conditions/ifs2icon_2020012000_${gridID}_${RES}_G.nc
+# analysis_file=${input_folder}/initial_conditions/ifs2icon_2020012000_${gridID}_${RES}_G.nc
+analysis_file=${input_folder}/initial_conditions/ifs2icon_2016080100_${gridID}_${RES}_G.nc
 extpar_file=${input_folder}/external_parameter/external_parameter_icon_${gridID}_${RES}_G_tiles.nc
 
 sst_dir=${input_folder}/sst_and_seaice/r0001
@@ -184,14 +189,14 @@ output_stream_7
 output_stream_8
 output_stream_9
 output_stream_10
-output_stream_11
+# output_stream_11
 output_stream_12
 output_stream_13
 
 # ----------------------------------------------------------------------------
 # Link input files and check some data availability
-ln -sf ${analysis_file} .
-ln -sf ${extpar_file} .
+# ln -sf ${analysis_file} .
+# ln -sf ${extpar_file} .
 ln -sf ${input_folder}/${atmo_dyn_grid} .
 ln -sf ${ecrad_data} ./ecrad_data
 ln -sf ${icon_base_data_dir}/ECHAM6_CldOptProps.nc .
