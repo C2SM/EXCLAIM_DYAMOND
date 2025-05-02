@@ -40,8 +40,8 @@ source "${SCRIPT_DIR}/../tools.sh"
 basedir="/capstor/store/cscs/userlab/cwd01/leclairm/exclaim_compilation_liskov/archive/icon_25.2_v3/icon-exclaim/build_dsl"
 ICON_EXE="${basedir}/bin/icon"
 
-RES=R02B06
-gridID=0021
+RES=R02B10
+gridID=0017
 
 input_folder="/capstor/scratch/cscs/ppothapa/data_from_santis/grids/MPI_grids/atmo/${RES}"
 icon_base_data_dir="${basedir}/data"
@@ -55,18 +55,18 @@ EXPNAME="Diamond_${RES}L120"
 # Compute resources
 
 #  - ML - use default values and export to allow benchmarks varying the number of nodes
-[ -z "${no_of_nodes}" ] && export no_of_nodes=2
-[ -z "${num_io_procs}" ] && export num_io_procs=1
+[ -z "${no_of_nodes}" ] && export no_of_nodes=100
+[ -z "${num_io_procs}" ] && export num_io_procs=10
 mpi_procs_pernode=4
 (( mpi_total_procs = no_of_nodes * mpi_procs_pernode ))
 
-[ -z "${WALL_TIME}" ] && export WALL_TIME="00:10:00"
+[ -z "${WALL_TIME}" ] && export WALL_TIME="00:30:00"
 
 # ----------------------------------------------------------------------------
 # blocking length
 
 nproma=85000   # 491520 / n_compute nodes = 12288., was 13500 before
-#R2B4 edges 30720, 
+#R2B4 edges 30720,
 #n1 =30700,  nproma_sub=800 probably
 #n2 = 15400, nproma_sub = 1500
 #n3 =10500, nproma_sub = 1500
@@ -83,7 +83,7 @@ SUBMIT="sbatch --nodes=${no_of_nodes}  --time=${WALL_TIME} --output=${EXPDIR}/${
 # Time settings
 
 start_date="2020-01-20T00:00:00"
-end_date="2020-01-20T12:00:00"
+end_date="2020-01-20T06:00:00"
 
 checkpoint_interval="PT6H"
 restart_interval="PT6H"
@@ -110,14 +110,14 @@ export OMP_STACKSIZE=200M
 # Namelist parameters
 
 # Time steps
-timestep="PT180S"
-timestep_phy=180
+timestep="PT10S"
+timestep_phy=60
 
 # From CLM namelist for accumulating few variables within time of Interest. Exclusively for Rain
-PRECIP_INTERVAL=PT1H # interval for accumulating tot_prec in ISO8601 (needs to be consistent with HOUT_INC above)
-RUNOFF_INTERVAL=PT3H # interval for accumulating runoff in ISO8601 (needs to be consistent with HOUT_INC above)
-MAXT_INTERVAL=PT3H # interval for min/max of 2m-temperature in ISO8601 (needs to be consistent with HOUT_INC above)
-MELT_INTERVAL=PT3H # interval for accumulating snow_melt in ISO8601 (needs to be consistent with HOUT_INC above)
+PRECIP_INTERVAL=P1D # interval for accumulating tot_prec in ISO8601 (needs to be consistent with HOUT_INC above)
+RUNOFF_INTERVAL=P1D # interval for accumulating runoff in ISO8601 (needs to be consistent with HOUT_INC above)
+MAXT_INTERVAL=P1D # interval for min/max of 2m-temperature in ISO8601 (needs to be consistent with HOUT_INC above)
+MELT_INTERVAL=P1D # interval for accumulating snow_melt in ISO8601 (needs to be consistent with HOUT_INC above)
 
 # Soil Layers for TERRA
 ZML_SOIL="0.005,0.02,0.06,0.18,0.54,1.62,4.86,14.58"
@@ -125,17 +125,18 @@ ZML_SOIL="0.005,0.02,0.06,0.18,0.54,1.62,4.86,14.58"
 # ----------------------------------------------------------------------------
 # Set various input paths
 
-atmo_dyn_grid_dir=${input_folder}
 atmo_dyn_grid="icon_grid_${gridID}_${RES}_G.nc"
-analysis_file=${input_folder}/initial_conditions/ifs2icon_2020012000_${gridID}_${RES}_G.nc 
+analysis_file=${input_folder}/initial_conditions/ifs2icon_2020012000_${gridID}_${RES}_G.nc
 extpar_file=${input_folder}/external_parameter/external_parameter_icon_${gridID}_${RES}_G_tiles.nc
 
-sst_file_dir=/capstor/scratch/cscs/ppothapa/Dyamond_W_SO_SST_PREP/ESACCI-SST/final_output_daily_R02B06
-ice_file_dir=/capstor/scratch/cscs/ppothapa/Dyamond_W_SO_SST_PREP/ESACCI-SEAICE/final_output_daily
+sst_dir=${input_folder}/sst_and_seaice/r0001
+ice_dir=${input_folder}/sst_and_seaice/r0001
 
-ozone_file_dir=${input_folder}/ozone/r0001
+ozone_dir=${input_folder}/ozone
 
-aero_kinne_dir=/capstor/store/cscs/exclaim/excp01/ppothapa/data_from_santis/grids/MPI_grids/atmo/R02B06/aerosol_kinne/r0001
+aero_kinne_dir=${input_folder}/aerosol_kinne/r0100
+
+volc_dir=${input_folder}/volcanoes
 
 # ===== FIRST NON SUBMITTED EXECUTION ========================================
 
@@ -163,8 +164,8 @@ pushd "${EXPDIR}">/dev/null 2>&1 || exit 1
 # Build namelists
 
 # namelist files
-atmo_namelist="${EXPDIR}/NAMELIST_${EXPNAME}"
-master_namelist="${EXPDIR}/icon_master.namelist"
+atmo_namelist="NAMELIST_${EXPNAME}"
+master_namelist="icon_master.namelist"
 
 # ICON master namelist
 icon_master_nml
@@ -183,28 +184,35 @@ output_stream_7
 output_stream_8
 output_stream_9
 output_stream_10
+output_stream_11
+output_stream_12
+output_stream_13
 
 # ----------------------------------------------------------------------------
 # Link input files and check some data availability
-
-ln -sf ${analysis_file} ./ifs2icon_2005110100_${gridID}_${RES}_G.nc
-ln -sf ${extpar_file} ./external_parameter_icon_${gridID}_${RES}_G_tiles.nc
-ln -sf ${atmo_dyn_grid_dir}/${atmo_dyn_grid} .
+ln -sf ${analysis_file} .
+ln -sf ${extpar_file} .
+ln -sf ${input_folder}/${atmo_dyn_grid} .
 ln -sf ${ecrad_data} ./ecrad_data
 ln -sf ${icon_base_data_dir}/ECHAM6_CldOptProps.nc .
 ln -sf ${icon_base_data_dir}/rrtmg_lw.nc .
 
-ln -sf ${sst_file_dir}/SST_*_*_icon_grid_${gridID}_${RES}_G.nc .
-ln -sf ${ice_file_dir}/CI_*_*_icon_grid_${gridID}_${RES}_G.nc .
+ln -sf ${sst_dir}/SST_*_*_icon_grid_${gridID}_${RES}_G.nc .
+ln -sf ${ice_dir}/CI_*_*_icon_grid_${gridID}_${RES}_G.nc .
 
-ln -sf ${ozone_file_dir}/bc_ozone_2*.nc .
+ln -sf ${ozone_dir}/bc_ozone_2*.nc .
 
 # Kinne background aerosols for the year 1850 (irad_aero=12, filename without year)
-ln -sf  ${aero_kinne_dir}/bc_aeropt_kinne_lw_b16_coa.nc .
-ln -sf  ${aero_kinne_dir}/bc_aeropt_kinne_sw_b14_coa.nc .
+ln -sf  ${aero_kinne_dir}/bc_aeropt_kinne_lw_b16_coa_0017_R02B10.nc bc_aeropt_kinne_lw_b16_coa.nc
+ln -sf  ${aero_kinne_dir}/bc_aeropt_kinne_sw_b14_coa_0017_R02B10.nc bc_aeropt_kinne_sw_b14_coa.nc
+# use exclusively Kinne background aerosols for the year 2020 (change it to 2021 next year), filename without year (irad_aero=12)
+ln -sf  ${aero_kinne_dir}/bc_aeropt_kinne_sw_b14_fin_2020_0017_R02B10.nc bc_aeropt_kinne_sw_b14_fin.nc
+# Dyanmical Aerosols Plumes
+ln -sf ${aero_kinne_dir}/MACv2.0-SP-merged-historical-and-SSP2-45_v1.nc MACv2.0-SP_v1.nc
 
-# use exclusively Kinne background aerosols for the year 1850, filename without year (irad_aero=12)
-ln -sf  ${aero_kinne_dir}/bc_aeropt_kinne_sw_b14_fin_1865.nc bc_aeropt_kinne_sw_b14_fin.nc
+# Volcanic Aerosols
+ln -sf ${volc_dir}/bc_aeropt_cmip6_volc_lw_b16_sw_b14_2020.nc .
+ln -sf ${volc_dir}/bc_aeropt_cmip6_volc_lw_b16_sw_b14_2021.nc .
 
 check_available "initial data" ${analysis_file}
 check_available "grid file" ${atmo_dyn_grid}
