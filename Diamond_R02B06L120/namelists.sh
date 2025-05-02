@@ -71,7 +71,7 @@ main_atmo_nml(){
 &initicon_nml
 ! initialization mode (2 for IFS ana, 1 for DWD ana, 4=cosmo, 2=ifs, 3=combined
  init_mode                    = 2
- ifs2icon_filename            = "${analysis_file}"
+ ifs2icon_filename            = "$(basename ${analysis_file})"
  zpbl1                        = 500.    !NEW Works  !(CLM) bottom height (AGL) of layer used for gradient computation
  zpbl2                        = 1000.   !NEW Works    !(CLM) top height (AGL) of layer used for gradient computation
  ltile_init                   =.true.   !NEW Works   !(CLM) True: initialize tiled surface fields from a first guess coming from a run without tiles.
@@ -227,7 +227,7 @@ main_atmo_nml(){
 
 
 &extpar_nml
- extpar_filename              = "${extpar_file}"
+ extpar_filename              = "$(basename ${extpar_file})"
  itopo                        = 1    ! Topography read from file
  n_iter_smooth_topo             = 1  ! iterations of topography smoother
  heightdiff_threshold           = 3000. ! height difference between neighboring grid points above which additional local nabla2 diffusion is applied

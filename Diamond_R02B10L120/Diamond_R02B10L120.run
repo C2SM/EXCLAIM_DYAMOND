@@ -32,39 +32,48 @@ set | grep SLURM
 # ===== SOURCED FILES ========================================================
 
 # Source secondary files
-safe_source(){
-    [ -f "${1}" ] && source "${1}" || (echo "ERROR: ${1} not found"; exit 1)
-}
-
-safe_source "${SCRIPT_DIR}/namelists.sh"
-safe_source "${SCRIPT_DIR}/../Common/tools.sh"
+source "${SCRIPT_DIR}/namelists.sh"
+source "${SCRIPT_DIR}/../Common/tools.sh"
 
 # ===== SETTINGS =============================================================
-
-basedir="/capstor/store/cscs/userlab/cwd01/leclairm/exclaim_compilation_liskov/archive/icon_25.2_v3/icon-exclaim/build_dsl"
-ICON_EXE="${basedir}/bin/icon"
+#
+# All settings required to build the namelists and link input files
 
 RES=R02B10
 gridID=0017
 
-input_folder="/capstor/scratch/cscs/ppothapa/data_from_santis/grids/MPI_grids/atmo/${RES}"
-icon_base_data_dir="${basedir}/data"
-ecrad_data=${basedir}/externals/ecrad/data
+basedir="/capstor/store/cscs/userlab/cwd01/leclairm/exclaim_compilation_liskov/archive/icon_25.2_v3/icon-exclaim/build_dsl"
+ICON_EXE="${basedir}/bin/icon"
 
 EXPNAME="Diamond_${RES}L120"
-#  - ML - use default value and export to allow restarts from custom EXPDIR
-[ -z "${EXPDIR}" ] && export EXPDIR="${SCRIPT_DIR}/experiments/${EXPNAME}_main"
+if [ -z "${EXPDIR}" ]; then
+    EXPDIR="${SCRIPT_DIR}/experiments/${EXPNAME}_main"
+else
+    EXPDIR=$(realpath "${EXPDIR}")
+fi
+export EXPDIR
+
+# ----------------------------------------------------------------------------
+# Time settings
+
+[ -z "${start_date}" ] && start_date="2020-01-20T00:00:00"
+[ -z "${end_date}" ] && end_date="2020-01-20T06:00:00"
+export start_date end_date
+
+checkpoint_interval="PT6H"
+restart_interval="PT6H"
 
 # ----------------------------------------------------------------------------
 # Compute resources
 
-#  - ML - use default values and export to allow benchmarks varying the number of nodes
-[ -z "${no_of_nodes}" ] && export no_of_nodes=140
-[ -z "${num_io_procs}" ] && export num_io_procs=10
+[ -z "${no_of_nodes}" ] && no_of_nodes=160
+[ -z "${num_io_procs}" ] && num_io_procs=12
+export no_of_nodes num_io_procs
 mpi_procs_pernode=4
 (( mpi_total_procs = no_of_nodes * mpi_procs_pernode ))
 
-[ -z "${WALL_TIME}" ] && export WALL_TIME="00:30:00"
+[ -z "${WALL_TIME}" ] && WALL_TIME="00:30:00"
+export WALL_TIME
 
 # ----------------------------------------------------------------------------
 # blocking length
@@ -78,19 +87,11 @@ nproma_sub=5000
 nblocks_c=0
 nblocks_e=1
 
+# ----------------------------------------------------------------------------
 # How to start and submit the icon model
-# --------------------------------------
+#
 START="srun -n ${mpi_total_procs} --ntasks-per-node ${mpi_procs_pernode} --threads-per-core=1 --distribution=cyclic  ${SCRIPT_DIR}/../Common/run_wrapper.sh"
 SUBMIT="sbatch --nodes=${no_of_nodes}  --time=${WALL_TIME} --output=${EXPDIR}/${EXPNAME}.%j.o ${SCRIPT_PATH}"
-
-# ----------------------------------------------------------------------------
-# Time settings
-
-start_date="2020-01-20T00:00:00"
-end_date="2020-01-20T06:00:00"
-
-checkpoint_interval="PT6H"
-restart_interval="PT6H"
 
 # ----------------------------------------------------------------------------
 # Runtime environment variables
@@ -111,7 +112,7 @@ export OMP_DYNAMIC="false"
 export OMP_STACKSIZE=200M
 
 # ----------------------------------------------------------------------------
-# Namelist parameters
+# Some namelist parameters
 
 # Time steps
 timestep="PT10S"
@@ -129,9 +130,12 @@ ZML_SOIL="0.005,0.02,0.06,0.18,0.54,1.62,4.86,14.58"
 # ----------------------------------------------------------------------------
 # Set various input paths
 
+input_folder=/capstor/store/cscs/exclaim/excp01/ppothapa/data_from_santis/grids/MPI_grids/atmo/${RES}
+icon_base_data_dir="${basedir}/data"
+ecrad_data=${basedir}/externals/ecrad/data
+
 atmo_dyn_grid="icon_grid_${gridID}_${RES}_G.nc"
-# analysis_file=${input_folder}/initial_conditions/ifs2icon_2020012000_${gridID}_${RES}_G.nc
-analysis_file=${input_folder}/initial_conditions/ifs2icon_2016080100_${gridID}_${RES}_G.nc
+analysis_file=${input_folder}/initial_conditions/ifs2icon_2020012000_${gridID}_${RES}_G.nc
 extpar_file=${input_folder}/external_parameter/external_parameter_icon_${gridID}_${RES}_G_tiles.nc
 
 sst_dir=${input_folder}/sst_and_seaice/r0001
@@ -143,23 +147,9 @@ aero_kinne_dir=${input_folder}/aerosol_kinne/r0100
 
 volc_dir=${input_folder}/volcanoes
 
-# ===== FIRST NON SUBMITTED EXECUTION ========================================
+# ===== FIRST SUBMIT =========================================================
 
-# In the case of a first execution of that script directly from the command
-# line, submit it again after creating the EXPDIR and using set variables
-# like experiment dir, nodes, walltime, ...
-
-if [ "${SUBMITTED}" == "false" ]; then
-    export FIRST_EXECUTION="false"
-    if [ ! -d "${EXPDIR}" ]; then
-        echo "EXPDIR does not exist. Creating ${EXPDIR}..."
-        mkdir -p "${EXPDIR}"
-    else
-        echo "EXPDIR already exists at ${EXPDIR}"
-    fi
-    ${SUBMIT}
-    exit 0
-fi
+first_submit
 
 # ===== SET UP EXPDIR ========================================================
 
@@ -195,8 +185,9 @@ output_stream_13
 
 # ----------------------------------------------------------------------------
 # Link input files and check some data availability
-# ln -sf ${analysis_file} .
-# ln -sf ${extpar_file} .
+
+ln -sf ${analysis_file} .
+ln -sf ${extpar_file} .
 ln -sf ${input_folder}/${atmo_dyn_grid} .
 ln -sf ${ecrad_data} ./ecrad_data
 ln -sf ${icon_base_data_dir}/ECHAM6_CldOptProps.nc .
@@ -227,23 +218,4 @@ check_available "icon executable" ${ICON_EXE}
 
 # ===== RUN THE MODEL ========================================================
 
-status_file="${EXPDIR}/finish.status"
-rm -f "${status_file}"
-
-date
-${START} ${ICON_EXE}
-date
-
-finish_status=$(cat "${status_file}")
-echo
-echo "============================"
-echo "Script ran successfully: ${finish_status}"
-echo "============================"
-echo
-
-# Resubmit in case of restart
-if [[ "${finish_status}" == " RESTART" ]]; then
-    echo "submitting next chunk"
-    export lrestart=.true.
-    ${SUBMIT}
-fi
+run_model
