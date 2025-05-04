@@ -304,19 +304,62 @@ EOF
 # Output streams
 # --------------
 
-output_stream_1(){
+output_stream_1.1(){
+    mkdir -p ${EXPDIR}/out1
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- output_filename = "${EXPNAME}_atm_3d_out1"          ! file name base
- filename_format = "${EXPNAME}_out32_<datetime2>"     ! Output file format
+ output_filename = "${EXPDIR}/out1/"                                    ! file name base
+ filename_format = "<output_filename>${EXPNAME}_out1.1_<datetime2>"     ! Output file format
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
  output_interval = "PT6H"
  file_interval   = "PT6H"
  include_last    = .true.
- pl_varlist      = 'qc', 'qr', 'qi', 'qs', 'qg', 'temp', 'u', 'v', 'w'
+ pl_varlist      = 'qc', 'qr', 'qi'
+ p_levels        = 100,200,300,500,700,1000,2000,3000,5000,7000,10000,12500,15000,17500,20000,22500,25000,30000,35000,40000,45000,50000,55000,60000,65000,70000,75000,77500,80000,82500,85000,87500,90000,92500,95000,97500,100000
+ output_grid     =  .true.
+ mode            =   1
+/
+EOF
+}
+
+output_stream_1.2(){
+    mkdir -p ${EXPDIR}/out1
+    cat >> ${atmo_namelist} << EOF
+
+&output_nml
+ output_filename = "${EXPDIR}/out1/"
+ filename_format = "<output_filename>${EXPNAME}_out1.2_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT6H"
+ file_interval   = "PT6H"
+ include_last    = .true.
+ pl_varlist      = 'qs', 'qg', 'temp'
+ p_levels        = 100,200,300,500,700,1000,2000,3000,5000,7000,10000,12500,15000,17500,20000,22500,25000,30000,35000,40000,45000,50000,55000,60000,65000,70000,75000,77500,80000,82500,85000,87500,90000,92500,95000,97500,100000
+ output_grid     =  .true.
+ mode            =   1
+/
+EOF
+}
+
+output_stream_1.3(){
+    mkdir -p ${EXPDIR}/out1
+    cat >> ${atmo_namelist} << EOF
+
+&output_nml
+ output_filename = "${EXPDIR}/out1/"
+ filename_format = "<output_filename>${EXPNAME}_out1.3_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT6H"
+ file_interval   = "PT6H"
+ include_last    = .true.
+ pl_varlist      = 'u', 'v', 'w'
  p_levels        = 100,200,300,500,700,1000,2000,3000,5000,7000,10000,12500,15000,17500,20000,22500,25000,30000,35000,40000,45000,50000,55000,60000,65000,70000,75000,77500,80000,82500,85000,87500,90000,92500,95000,97500,100000
  output_grid     =  .true.
  mode            =   1
@@ -325,10 +368,12 @@ EOF
 }
 
 output_stream_2(){
+    mkdir -p ${EXPDIR}/out2
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "${EXPNAME}_out2_<datetime2>"     ! Output file format
+ output_filename = "${EXPDIR}/out2/"
+ filename_format = "<output_filename>${EXPNAME}_out2_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -343,10 +388,12 @@ EOF
 }
 
 output_stream_3(){
+    mkdir -p ${EXPDIR}/out3
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "${EXPNAME}_out3_<datetime2>"     ! Output file format
+ output_filename = "${EXPDIR}/out3/"
+ filename_format = "<output_filename>${EXPNAME}_out3_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -361,10 +408,12 @@ EOF
 }
 
 output_stream_4(){
+    mkdir -p ${EXPDIR}/out4
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "${EXPNAME}_out4_<datetime2>"     ! Output file format
+ output_filename = "${EXPDIR}/out4/"
+ filename_format = "<output_filename>${EXPNAME}_out4_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -379,10 +428,12 @@ EOF
 }
 
 output_stream_5(){
+    mkdir -p ${EXPDIR}/out5
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "${EXPNAME}_out5_<datetime2>"     ! Output file format
+ output_filename = "${EXPDIR}/out5/"
+ filename_format = "<output_filename>${EXPNAME}_out5_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -396,13 +447,13 @@ output_stream_5(){
 EOF
 }
 
-# - ML - CONTINUE HERE
-
 output_stream_6(){
+    mkdir -p ${EXPDIR}/out6
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "${EXPNAME}_out6_<datetime2>"     ! Output file format
+ output_filename = "${EXPDIR}/out6/"
+ filename_format = "<output_filename>${EXPNAME}_out6_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -417,10 +468,12 @@ EOF
 }
 
 output_stream_7(){
+    mkdir -p ${EXPDIR}/out7
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "${EXPNAME}_out7_<datetime2>"     ! Output file format
+ output_filename = "${EXPDIR}/out7/"
+ filename_format = "<output_filename>${EXPNAME}_out7_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -436,10 +489,12 @@ EOF
 }
 
 output_stream_8(){
+    mkdir -p ${EXPDIR}/out8
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "${EXPNAME}_out8_<datetime2>"     ! Output file format
+ output_filename = "${EXPDIR}/out8/"
+ filename_format = "<output_filename>${EXPNAME}_out8_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -455,10 +510,12 @@ EOF
 }
 
 output_stream_9(){
+    mkdir -p ${EXPDIR}/out9
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "${EXPNAME}_out9_<datetime2>"     ! Output file format
+ output_filename = "${EXPDIR}/out9/"
+ filename_format = "<output_filename>${EXPNAME}_out9_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -473,11 +530,12 @@ EOF
 }
 
 output_stream_10(){
+    mkdir -p ${EXPDIR}/out10
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- output_filename = "${EXPNAME}_atm_2d_out10"          ! file name base
- filename_format = "${EXPNAME}_out10_<datetime2>"     ! Output file format
+ output_filename = "${EXPDIR}/out10/"
+ filename_format = "<output_filename>${EXPNAME}_out10_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -491,11 +549,13 @@ output_stream_10(){
 EOF
 }
 
-output_stream_12(){
+output_stream_11(){
+    mkdir -p ${EXPDIR}/out11
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "${EXPNAME}_out12_<datetime2>"     ! Output file format
+ output_filename = "${EXPDIR}/out11/"
+ filename_format = "<output_filename>${EXPNAME}_out11_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -509,11 +569,13 @@ output_stream_12(){
 EOF
 }
 
-output_stream_13(){
+output_stream_12(){
+    mkdir -p ${EXPDIR}/out12
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "${EXPNAME}_out13_<datetime2>"     ! Output file format
+ output_filename = "${EXPDIR}/out12/"
+ filename_format = "<output_filename>${EXPNAME}_out12_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"

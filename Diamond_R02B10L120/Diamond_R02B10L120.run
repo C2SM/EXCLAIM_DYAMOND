@@ -66,8 +66,8 @@ restart_interval="PT6H"
 # ----------------------------------------------------------------------------
 # Compute resources
 
-[ -z "${no_of_nodes}" ] && no_of_nodes=160
-[ -z "${num_io_procs}" ] && num_io_procs=12
+[ -z "${no_of_nodes}" ] && no_of_nodes=240
+[ -z "${num_io_procs}" ] && num_io_procs=14
 export no_of_nodes num_io_procs
 mpi_procs_pernode=4
 (( mpi_total_procs = no_of_nodes * mpi_procs_pernode ))
@@ -169,7 +169,9 @@ icon_master_nml
 main_atmo_nml
 
 # Output streams. Comment out to deactivate
-output_stream_1
+output_stream_1.1
+output_stream_1.2
+output_stream_1.3
 output_stream_2
 output_stream_3
 output_stream_4
@@ -179,9 +181,8 @@ output_stream_7
 output_stream_8
 output_stream_9
 output_stream_10
-# output_stream_11
+output_stream_11
 output_stream_12
-output_stream_13
 
 # ----------------------------------------------------------------------------
 # Link input files and check some data availability
