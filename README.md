@@ -11,6 +11,9 @@ These environment variables can be set to take precedence over the default ones 
 ``` shell
 lrestart
 EXPDIR
+UENV
+VIEW
+ACCOUNT
 no_of_nodes
 num_io_procs
 WALL_TIME
