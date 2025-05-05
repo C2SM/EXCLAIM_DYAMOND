@@ -85,8 +85,6 @@ link_input(){
            fi
        done
    fi
-
-
 }
 
 check_available(){

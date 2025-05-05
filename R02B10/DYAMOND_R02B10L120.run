@@ -34,8 +34,8 @@ source "${SCRIPT_DIR}/../Common/tools.sh"
 RES=R02B10
 gridID=0017
 
-basedir="/capstor/store/cscs/userlab/cwd01/leclairm/exclaim_compilation_liskov/archive/icon_25.2_v3/icon-exclaim/build_dsl"
-ICON_EXE="${basedir}/bin/icon"
+basedir="/capstor/store/cscs/userlab/cwd01/leclairm/exclaim_compilation_liskov/archive/icon_25.2_v3/icon-exclaim"
+ICON_EXE="${basedir}/build_dsl/bin/icon"
 
 EXPNAME="DYAMOND_${RES}L120"
 if [ -z "${EXPDIR}" ]; then
@@ -107,15 +107,6 @@ nblocks_e=1
 timestep="PT10S"
 timestep_phy=60
 
-# From CLM namelist for accumulating few variables within time of Interest. Exclusively for Rain
-PRECIP_INTERVAL=P1D # interval for accumulating tot_prec in ISO8601 (needs to be consistent with HOUT_INC above)
-RUNOFF_INTERVAL=P1D # interval for accumulating runoff in ISO8601 (needs to be consistent with HOUT_INC above)
-MAXT_INTERVAL=P1D # interval for min/max of 2m-temperature in ISO8601 (needs to be consistent with HOUT_INC above)
-MELT_INTERVAL=P1D # interval for accumulating snow_melt in ISO8601 (needs to be consistent with HOUT_INC above)
-
-# Soil Layers for TERRA
-ZML_SOIL="0.005,0.02,0.06,0.18,0.54,1.62,4.86,14.58"
-
 # ----------------------------------------------------------------------------
 # Set various input paths
 
@@ -181,10 +172,10 @@ link_input ${ecrad_data} ecrad_data
 link_input ${icon_base_data_dir}/ECHAM6_CldOptProps.nc
 link_input ${icon_base_data_dir}/rrtmg_lw.nc
 
-link_input ${sst_dir}/SST_*_*_icon_grid_${gridID}_${RES}_G.nc
-link_input ${ice_dir}/CI_*_*_icon_grid_${gridID}_${RES}_G.nc
+link_input "${sst_dir}/SST_*_*_icon_grid_${gridID}_${RES}_G.nc"
+link_input "${ice_dir}/CI_*_*_icon_grid_${gridID}_${RES}_G.nc"
 
-link_input ${ozone_dir}/bc_ozone_2*.nc
+link_input "${ozone_dir}/bc_ozone_2*.nc"
 
 # Kinne background aerosols for the year 1850 (irad_aero=12, filename without year)
 link_input ${aero_kinne_dir}/bc_aeropt_kinne_lw_b16_coa_0017_R02B10.nc bc_aeropt_kinne_lw_b16_coa.nc

@@ -103,10 +103,10 @@ main_atmo_nml(){
  restart_write_mode           = "joint procs multifile"    ! For Large Runs Joint procs is recomemded from our experience
  lflux_avg                    = .true.   ! "FALSE" output fluxes are accumulated from the beginning of the run, "TRUE" average values
  lnetcdf_flt64_output         = .false.  ! Default value is false (CK)
- precip_interval              = "${PRECIP_INTERVAL}" !NEW ! Works The precipitation value is accumulated in these interval otherwise accumulated fromm begining of the run
- runoff_interval              = "${RUNOFF_INTERVAL}" !NEW ! Works The runoff is accumalted in this inetrval else accumulated from bengining.
- maxt_interval                = "${MAXT_INTERVAL}"   !NEW ! Works Interval at which Max/Min 2m temperture are calculated
- melt_interval               = "${MELT_INTERVAL}"   !NEW  ! Works CLM community has this , Can not find discription
+ precip_interval              = "PT1H"   !NEW ! Works The precipitation value is accumulated in these interval otherwise accumulated fromm begining of the run
+ runoff_interval              = "PT3H"   !NEW ! Works The runoff is accumalted in this inetrval else accumulated from bengining.
+ maxt_interval                = "PT3H"   !NEW ! Works Interval at which Max/Min 2m temperture are calculated
+ melt_interval                = "PT3H"   !NEW  ! Works CLM community has this , Can not find discription
  lmask_boundary               = .true.             !NEW  ! Works if interpolation zone should be masked in triangular output.
 /
 
@@ -283,7 +283,7 @@ main_atmo_nml(){
                       !    based on actual monthly means
   ntiles         = 3
   nlev_snow      = 1
-  zml_soil       = ${ZML_SOIL}
+  zml_soil       = 0.005,0.02,0.06,0.18,0.54,1.62,4.86,14.58
   lmulti_snow    = .false.
   itype_heatcond = 3
   idiag_snowfrac = 20
