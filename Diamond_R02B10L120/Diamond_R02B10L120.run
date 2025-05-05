@@ -37,9 +37,9 @@ gridID=0017
 basedir="/capstor/store/cscs/userlab/cwd01/leclairm/exclaim_compilation_liskov/archive/icon_25.2_v3/icon-exclaim/build_dsl"
 ICON_EXE="${basedir}/bin/icon"
 
-EXPNAME="Diamond_${RES}L120"
+EXPNAME="DYAMOND_${RES}L120"
 if [ -z "${EXPDIR}" ]; then
-    EXPDIR="${SCRIPT_DIR}/experiments/${EXPNAME}_main"
+    EXPDIR="${SCRATCH}/DYAMOND_experiments/${EXPNAME}_main"
 else
     EXPDIR=$(realpath "${EXPDIR}")
 fi
