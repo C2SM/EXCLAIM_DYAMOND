@@ -56,9 +56,8 @@ export EXPDIR
 # ----------------------------------------------------------------------------
 # Time settings
 
-[ -z "${start_date}" ] && start_date="2020-01-20T00:00:00"
-[ -z "${end_date}" ] && end_date="2020-01-20T06:00:00"
-export start_date end_date
+export start_date=${start_date:-"2020-01-20T00:00:00"}
+export end_date=${end_date:-"2020-01-20T06:00:00"}
 
 checkpoint_interval="PT6H"
 restart_interval="PT6H"
@@ -66,14 +65,12 @@ restart_interval="PT6H"
 # ----------------------------------------------------------------------------
 # Compute resources
 
-[ -z "${no_of_nodes}" ] && no_of_nodes=240
-[ -z "${num_io_procs}" ] && num_io_procs=14
-export no_of_nodes num_io_procs
+export no_of_nodes=${no_of_nodes:-240}
+export num_io_procs=${num_io_procs:-14}
 mpi_procs_pernode=4
 (( mpi_total_procs = no_of_nodes * mpi_procs_pernode ))
 
-[ -z "${WALL_TIME}" ] && WALL_TIME="00:30:00"
-export WALL_TIME
+export WALL_TIME=${WALL_TIME:-"00:30:00"}
 
 # ----------------------------------------------------------------------------
 # blocking length
@@ -113,6 +110,10 @@ export OMP_STACKSIZE=200M
 
 # ----------------------------------------------------------------------------
 # Some namelist parameters
+
+# en/dis-able I/O
+export enable_io=${enable_io:-"true"}
+[ "${enable_io}" == "true" ] ||  export num_io_procs=0
 
 # Time steps
 timestep="PT10S"
@@ -169,20 +170,22 @@ icon_master_nml
 main_atmo_nml
 
 # Output streams. Comment out to deactivate
-output_stream_1.1
-output_stream_1.2
-output_stream_1.3
-output_stream_2
-output_stream_3
-output_stream_4
-output_stream_5
-output_stream_6
-output_stream_7
-output_stream_8
-output_stream_9
-output_stream_10
-output_stream_11
-output_stream_12
+if [ "${enable_io}" == "true" ]; then
+    output_stream_1.1
+    output_stream_1.2
+    output_stream_1.3
+    output_stream_2
+    output_stream_3
+    output_stream_4
+    output_stream_5
+    output_stream_6
+    output_stream_7
+    output_stream_8
+    output_stream_9
+    output_stream_10
+    output_stream_11
+    output_stream_12
+fi
 
 # ----------------------------------------------------------------------------
 # Link input files and check some data availability

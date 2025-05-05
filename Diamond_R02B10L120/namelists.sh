@@ -276,8 +276,8 @@ main_atmo_nml(){
 &lnd_nml
   sstice_mode    = 6  ! 4: SST and sea ice fraction are updated daily,
                        !    based on actual monthly means
-!  ci_td_filename = '${sst_dir}/SIC_SeaIce_CMIP_CI_PCMDI-AMIP-1-1-7_197801-202012_daily_0013_R02B04_G.nc'
-!  sst_td_filename= '${sic_dir}/SST_CMIP_PCMDI-AMIP-1-1-7_197801-202012_daily_0013_R02B04_G.nc'
+!  sst_td_filename = '${sst_dir}/SST_CMIP_PCMDI-AMIP-1-1-7_197801-202012_daily_0013_R02B04_G.nc'
+!  ci_td_filename = '${sic_dir}/SIC_SeaIce_CMIP_CI_PCMDI-AMIP-1-1-7_197801-202012_daily_0013_R02B04_G.nc'
   ntiles         = 3
   nlev_snow      = 1
   zml_soil       = ${ZML_SOIL}
