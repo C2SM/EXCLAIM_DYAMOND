@@ -1,12 +1,5 @@
 #! /bin/bash
 
-# ===== SBATCH OPTIONS =======================================================
-
-#SBATCH --account cwd01
-#SBATCH --job-name=Diamond_R02B06L120
-#SBATCH --uenv=icon/25.2:v3
-#SBATCH --view=default
-
 # ===== INIT =================================================================
 
 set +x
@@ -36,7 +29,6 @@ source "${SCRIPT_DIR}/namelists.sh"
 source "${SCRIPT_DIR}/../Common/tools.sh"
 
 # ===== SETTINGS =============================================================
-#
 # All settings required to build the namelists and link input files
 
 RES=R02B10
@@ -59,11 +51,13 @@ export EXPDIR
 export start_date=${start_date:-"2020-01-20T00:00:00"}
 export end_date=${end_date:-"2020-01-20T06:00:00"}
 
-export restart_interval=${restart_interval:-"P1M"}
+export restart_interval=${restart_interval:-"P10D"}
 export checkpoint_interval=${checkpoint_interval:-${restart_interval}}
 
 # ----------------------------------------------------------------------------
 # Compute resources
+
+export ACCOUNT=${ACCOUNT:-"cwd01"}
 
 export no_of_nodes=${no_of_nodes:-240}
 export num_io_procs=${num_io_procs:-14}
@@ -72,23 +66,11 @@ mpi_procs_pernode=4
 
 export WALL_TIME=${WALL_TIME:-"24:00:00"}
 
-# ----------------------------------------------------------------------------
-# blocking length
+export UENV=${UENV:-"icon/25.2:v3"}
+export VIEW=${VIEW:-"default"}
 
-nproma=85000   # 491520 / n_compute nodes = 12288., was 13500 before
-#R2B4 edges 30720,
-#n1 =30700,  nproma_sub=800 probably
-#n2 = 15400, nproma_sub = 1500
-#n3 =10500, nproma_sub = 1500
-nproma_sub=5000
-nblocks_c=0
-nblocks_e=1
-
-# ----------------------------------------------------------------------------
-# How to start and submit the icon model
-#
-START="srun -n ${mpi_total_procs} --ntasks-per-node ${mpi_procs_pernode} --threads-per-core=1 --distribution=cyclic  ${SCRIPT_DIR}/../Common/run_wrapper.sh"
-SUBMIT="sbatch --nodes=${no_of_nodes}  --time=${WALL_TIME} --output=${EXPDIR}/${EXPNAME}.%j.o ${SCRIPT_PATH}"
+# submit first here as the relevant variables are set, will be ignored afterwards
+first_submit
 
 # ----------------------------------------------------------------------------
 # Runtime environment variables
@@ -115,6 +97,12 @@ export OMP_STACKSIZE=200M
 export enable_io=${enable_io:-"true"}
 [ "${enable_io}" == "true" ] ||  export num_io_procs=0
 
+# blocking length
+nproma=85000
+nproma_sub=5000
+nblocks_c=0
+nblocks_e=1
+
 # Time steps
 timestep="PT10S"
 timestep_phy=60
@@ -131,7 +119,7 @@ ZML_SOIL="0.005,0.02,0.06,0.18,0.54,1.62,4.86,14.58"
 # ----------------------------------------------------------------------------
 # Set various input paths
 
-input_folder=/capstor/store/cscs/exclaim/excp01/ppothapa/data_from_santis/grids/MPI_grids/atmo/${RES}
+input_folder="/capstor/store/cscs/exclaim/excp01/ppothapa/data_from_santis/grids/MPI_grids/atmo/${RES}"
 icon_base_data_dir="${basedir}/data"
 ecrad_data=${basedir}/externals/ecrad/data
 
@@ -147,10 +135,6 @@ ozone_dir=${input_folder}/ozone
 aero_kinne_dir=${input_folder}/aerosol_kinne/r0100
 
 volc_dir=${input_folder}/volcanoes
-
-# ===== FIRST SUBMIT =========================================================
-
-first_submit
 
 # ===== SET UP EXPDIR ========================================================
 
@@ -190,36 +174,37 @@ fi
 # ----------------------------------------------------------------------------
 # Link input files and check some data availability
 
-ln -sf ${analysis_file} .
-ln -sf ${extpar_file} .
-ln -sf ${input_folder}/${atmo_dyn_grid} .
-ln -sf ${ecrad_data} ./ecrad_data
-ln -sf ${icon_base_data_dir}/ECHAM6_CldOptProps.nc .
-ln -sf ${icon_base_data_dir}/rrtmg_lw.nc .
+link_input ${analysis_file}
+link_input ${extpar_file}
+link_input ${input_folder}/${atmo_dyn_grid}
+link_input ${ecrad_data} ecrad_data
+link_input ${icon_base_data_dir}/ECHAM6_CldOptProps.nc
+link_input ${icon_base_data_dir}/rrtmg_lw.nc
 
-ln -sf ${sst_dir}/SST_*_*_icon_grid_${gridID}_${RES}_G.nc .
-ln -sf ${ice_dir}/CI_*_*_icon_grid_${gridID}_${RES}_G.nc .
+link_input ${sst_dir}/SST_*_*_icon_grid_${gridID}_${RES}_G.nc
+link_input ${ice_dir}/CI_*_*_icon_grid_${gridID}_${RES}_G.nc
 
-ln -sf ${ozone_dir}/bc_ozone_2*.nc .
+link_input ${ozone_dir}/bc_ozone_2*.nc
 
 # Kinne background aerosols for the year 1850 (irad_aero=12, filename without year)
-ln -sf  ${aero_kinne_dir}/bc_aeropt_kinne_lw_b16_coa_0017_R02B10.nc bc_aeropt_kinne_lw_b16_coa.nc
-ln -sf  ${aero_kinne_dir}/bc_aeropt_kinne_sw_b14_coa_0017_R02B10.nc bc_aeropt_kinne_sw_b14_coa.nc
+link_input ${aero_kinne_dir}/bc_aeropt_kinne_lw_b16_coa_0017_R02B10.nc bc_aeropt_kinne_lw_b16_coa.nc
+link_input ${aero_kinne_dir}/bc_aeropt_kinne_sw_b14_coa_0017_R02B10.nc bc_aeropt_kinne_sw_b14_coa.nc
 # use exclusively Kinne background aerosols for the year 2020 (change it to 2021 next year), filename without year (irad_aero=12)
-ln -sf  ${aero_kinne_dir}/bc_aeropt_kinne_sw_b14_fin_2020_0017_R02B10.nc bc_aeropt_kinne_sw_b14_fin.nc
+link_input ${aero_kinne_dir}/bc_aeropt_kinne_sw_b14_fin_2020_0017_R02B10.nc bc_aeropt_kinne_sw_b14_fin.nc
 # Dyanmical Aerosols Plumes
-ln -sf ${aero_kinne_dir}/MACv2.0-SP-merged-historical-and-SSP2-45_v1.nc MACv2.0-SP_v1.nc
+link_input ${aero_kinne_dir}/MACv2.0-SP-merged-historical-and-SSP2-45_v1.nc MACv2.0-SP_v1.nc
 
 # Volcanic Aerosols
-ln -sf ${volc_dir}/bc_aeropt_cmip6_volc_lw_b16_sw_b14_2020.nc .
-ln -sf ${volc_dir}/bc_aeropt_cmip6_volc_lw_b16_sw_b14_2021.nc .
+link_input ${volc_dir}/bc_aeropt_cmip6_volc_lw_b16_sw_b14_2020.nc
+link_input ${volc_dir}/bc_aeropt_cmip6_volc_lw_b16_sw_b14_2021.nc
 
 check_available "initial data" ${analysis_file}
 check_available "grid file" ${atmo_dyn_grid}
 check_available "extpar file" ${extpar_file}
 
-check_available "icon executable" ${ICON_EXE}
-
 # ===== RUN THE MODEL ========================================================
+
+link_input "${ICON_EXE}" icon
+check_available "icon executable" "icon"
 
 run_model

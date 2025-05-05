@@ -1,5 +1,17 @@
 #!/usr/bin/bash
 
+submit(){
+   sbatch \
+       --account="${ACCOUNT}" \
+       --uenv="${UENV}" \
+       --view="${VIEW}" \
+       --nodes="${no_of_nodes}" \
+       --time="${WALL_TIME}" \
+       --job-name="${EXPNAME}" \
+       --output="${EXPDIR}/${EXPNAME}.%j.o" \
+       "${SCRIPT_PATH}"
+}
+
 first_submit(){
    # In the case of a first execution of that script directly from the command
    # line, submit it using variables like EXPDIR, nodes, walltime, ... and exit
@@ -11,21 +23,8 @@ first_submit(){
        else
            echo "EXPDIR already exists at ${EXPDIR}"
        fi
-       [ -z "${START}" ] && (echo "ERROR: START not defined"; exit 1)
-       [ -z "${ICON_EXE}" ] && (echo "ERROR: ICON_EXE not defined"; exit 1)
-       [ -z "${SUBMIT}" ] && (echo "ERROR: SUBMIT not defined"; exit 1)
-       ${SUBMIT}
+       submit
        exit $?
-   fi
-}
-
-check_available(){
-   echo -n "Check for ${1} ... "
-   if [ -r "${2}" ]; then
-       echo "${2} AVAILABLE"
-   else
-       echo "${2} MISSING"
-       exit 1
    fi
 }
 
@@ -34,7 +33,14 @@ run_model(){
    rm -f "${status_file}"
 
    date
-   ${START} ${ICON_EXE}
+
+   srun \
+       --ntasks="${mpi_total_procs}" \
+       --ntasks-per-node="${mpi_procs_pernode}" \
+       --threads-per-core=1 \
+       --distribution="cyclic" \
+       "${SCRIPT_DIR}/../Common/santis_gpu.sh" "./icon"
+
    date
 
    if [ ! -f "${status_file}" ]; then
@@ -58,6 +64,37 @@ run_model(){
    if [ "${finish_status}" == " RESTART" ]; then
        echo "submitting next chunk"
        export lrestart=.true.
-       ${SUBMIT}
+       submit
+   fi
+}
+
+link_input(){
+   source="${1}"
+   target="${2:-}"
+   if [ -d "${source}" ]; then
+       [ -r "${source}" ] || (echo "ERROR ${source} not available"; exit 1)
+       target_dir="${target:-$(basename "${source}")}"
+       if [ ! -e "${target_dir}" ]; then
+           ln -s "${source}" "${target:-.}"
+       fi
+   else
+       for src_item in ${source}; do
+           if [ ! -e "$(basename ${src_item})" ]; then
+               [ -r "${src_item}" ] || (echo "ERROR ${src_item} not available"; exit 1)
+               ln -s "${src_item}" "${target:-.}"
+           fi
+       done
+   fi
+
+
+}
+
+check_available(){
+   echo -n "Check for ${1} ... "
+   if [ -r "${2}" ]; then
+       echo "${2} AVAILABLE"
+   else
+       echo "${2} MISSING"
+       exit 1
    fi
 }

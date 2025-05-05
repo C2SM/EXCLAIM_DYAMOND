@@ -100,7 +100,7 @@ main_atmo_nml(){
  itype_pres_msl               = 5       ! Method for comoputing mean sea level pressure (Mixture of IFS and GME model DWD)
  itype_rh                     = 1       ! RH w.r.t. water (WMO type Water only)
  restart_file_type            = 5       ! 4: netcdf2, 5: netcdf4  (Consistent across model output, netcdf4)
-!restart_write_mode          = "joint procs multifile"    ! For Large Runs Joint procs is recomemded from our experience
+ restart_write_mode           = "joint procs multifile"    ! For Large Runs Joint procs is recomemded from our experience
  lflux_avg                    = .true.   ! "FALSE" output fluxes are accumulated from the beginning of the run, "TRUE" average values
  lnetcdf_flt64_output         = .false.  ! Default value is false (CK)
  precip_interval              = "${PRECIP_INTERVAL}" !NEW ! Works The precipitation value is accumulated in these interval otherwise accumulated fromm begining of the run
@@ -308,177 +308,187 @@ EOF
 # --------------
 
 output_stream_1(){
+    mkdir -p out1
     cat >> ${atmo_namelist} << EOF
 
-&output_nml
- filename_format  = "${EXPNAME}_out1_<datetime2>"     ! Output file format
- filetype         = 5 ! NetCDF4
- output_start     = "${start_date}"
- output_end       = "${end_date}"
- output_interval  = "PT1H"
- file_interval    = "P1M"
- ml_varlist       = 'rain_con','tot_prec','clct','cape_ml','cape','thb_t','lcl_ml','lfc_ml','pres_msl'
- include_last     = .true.
- output_grid      = .true.
- mode             = 1
+&output_output
+ filename_format = "out1/${EXPNAME}_out1_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT1H"
+ file_interval   = "P1M"
+ ml_varlist      = 'rain_con','tot_prec','clct','cape_ml','cape','thb_t','lcl_ml','lfc_ml','pres_msl'
+ include_last    = .true.
+ output_grid     = .true.
+ mode            = 1
 /
 EOF
 }
 
 output_stream_2(){
+    mkdir -p out2
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format  = "${EXPNAME}_out2_<datetime2>"     ! Output file format
- filetype         = 5 ! NetCDF4
- output_start     = "${start_date}"
- output_end       = "${end_date}"
- output_interval  = "PT6H"
- file_interval    = "P1M"
- ml_varlist       = 'smi','w_i','t_so','w_so','freshsnow','rho_snow','w_snow','t_s','t_g'
- include_last     = .true.
- output_grid      = .true.
- mode             = 1
+ filename_format = "out2/${EXPNAME}_out2_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT6H"
+ file_interval   = "P1M"
+ ml_varlist      = 'smi','w_i','t_so','w_so','freshsnow','rho_snow','w_snow','t_s','t_g'
+ include_last    = .true.
+ output_grid     = .true.
+ mode            = 1
 /
 EOF
 }
 
 output_stream_3(){
+    mkdir -p out3
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format  = "${EXPNAME}_out3_<datetime2>"     ! Output file format
- filetype         = 5 ! NetCDF4
- output_start     = "${start_date}"
- output_end       = "${end_date}"
- output_interval  = "PT3H"
- file_interval    = "P1M"
-  ml_varlist      = 'clct','clcm','clcl','clch','pres_sfc','qv_2m','rh_2m',
-                    'runoff_g','runoff_s','snow_con','snow_gsp'
-                    't_2m','td_2m','u_10m','v_10m','gust10','sp_10m','snow_melt'
- include_last     = .true.
- output_grid      = .true.
- mode             = 1
+ filename_format = "out3/${EXPNAME}_out3_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT3H"
+ file_interval   = "P1M"
+  ml_varlist     = 'clct','clcm','clcl','clch','pres_sfc','qv_2m','rh_2m',
+                   'runoff_g','runoff_s','snow_con','snow_gsp'
+                   't_2m','td_2m','u_10m','v_10m','gust10','sp_10m','snow_melt'
+ include_last    = .true.
+ output_grid     = .true.
+ mode            = 1
 /
 EOF
 }
 
 output_stream_4(){
+    mkdir -p out4
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format  = "${EXPNAME}_out4_<datetime2>"     ! Output file format
- filetype         = 5 ! NetCDF4
- output_start     = "${start_date}"
- output_end       = "${end_date}"
- output_interval  = "PT6H"
- file_interval    = "P1M"
- ml_varlist       = 'tqc','tqi','tqv','tqr','tqs','h_snow'
- include_last     = .true.
- output_grid      = .true.
- mode             = 1
+ filename_format = "out4/${EXPNAME}_out4_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT6H"
+ file_interval   = "P1M"
+ ml_varlist      = 'tqc','tqi','tqv','tqr','tqs','h_snow'
+ include_last    = .true.
+ output_grid     = .true.
+ mode            = 1
 /
 EOF
 }
 
 output_stream_5(){
+    mkdir -p out5
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format  = "${EXPNAME}_out5_<datetime2>"     ! Output file format
- filetype         = 5 ! NetCDF4
- output_start     = "${start_date}"
- output_end       = "${end_date}"
- output_interval  = "PT6H"
- file_interval    = "P1M"
- ml_varlist       = 'qhfl_s','lhfl_s','shfl_s','thu_s','sob_s','sob_t','sod_t','sodifd_s','thb_s','sou_s','thb_t','umfl_s','vmfl_s'
- include_last     = .true.
- output_grid      = .true.
- mode             = 1
+ filename_format = "out5/${EXPNAME}_out5_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT6H"
+ file_interval   = "P1M"
+ ml_varlist      = 'qhfl_s','lhfl_s','shfl_s','thu_s','sob_s','sob_t','sod_t','sodifd_s','thb_s','sou_s','thb_t','umfl_s','vmfl_s'
+ include_last    = .true.
+ output_grid     = .true.
+ mode            = 1
 /
 EOF
 }
 
 output_stream_6(){
+    mkdir -p out6
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format  = "${EXPNAME}_out6_<datetime2>"     ! Output file format
- filetype         = 5 ! NetCDF4
- output_start     = "${start_date}"
- output_end       = "${end_date}"
- output_interval  = "PT3H"
- file_interval    = "P1D"
- include_last     = .true.
- pl_varlist       = 'geopot','qv','rh','qc','qr','qi','qs','qg','temp','u','v','w','omega','rho','pv','tke'
- p_levels         = 500,1000,2000,5000,10000,20000,30000,40000,50000,60000,70000,75000,82500,85000,92500,95000,97500,100000
- output_grid      = .true.
- mode             = 1
+ filename_format = "out6/${EXPNAME}_out6_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT3H"
+ file_interval   = "P1D"
+ include_last    = .true.
+ pl_varlist      = 'geopot','qv','rh','qc','qr','qi','qs','qg','temp','u','v','w','omega','rho','pv','tke'
+ p_levels        = 500,1000,2000,5000,10000,20000,30000,40000,50000,60000,70000,75000,82500,85000,92500,95000,97500,100000
+ output_grid     = .true.
+ mode            = 1
 /
 EOF
 }
 
 output_stream_7(){
+    mkdir -p out7
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format  = "${EXPNAME}_out7_<datetime2>"     ! Output file format
- filetype         = 5 ! NetCDF4
- output_start     = "${start_date}"
- output_end       = "${end_date}"
- output_interval  = "PT1H"
- file_interval    = "P1D"
- include_last     = .true.
- pl_varlist       = 'geopot','temp','u','v'
- p_levels         = 20000,50000,85000
- output_grid      = .true.
- mode             = 1
+ filename_format = "out7/${EXPNAME}_out7_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT1H"
+ file_interval   = "P1D"
+ include_last    = .true.
+ pl_varlist      = 'geopot','temp','u','v'
+ p_levels        = 20000,50000,85000
+ output_grid     = .true.
+ mode            = 1
 /
 EOF
 }
 
 output_stream_8(){
+    mkdir -p out8
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format  = "${EXPNAME}_out8_<datetime2>"     ! Output file format
- filetype         = 5 ! NetCDF4
- output_start     = "${start_date}"
- output_end       = "${end_date}"
- output_interval  = "PT3H"
- file_interval    = "P1D"
- include_last     = .true.
- pl_varlist       = 'qc','qr','qi'
- p_levels         = 100,200,300,500,700,1000,2000,3000,5000,7000,10000,12500,15000,17500,20000,22500,25000,30000,35000,40000,45000,50000,55000,60000,65000,70000,75000,77500,80000,82500,85000,87500,90000,92500,95000,97500,100000
- output_grid      = .true.
- mode             = 1
+ filename_format = "out8/${EXPNAME}_out8_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT3H"
+ file_interval   = "P1D"
+ include_last    = .true.
+ pl_varlist      = 'qc','qr','qi'
+ p_levels        = 100,200,300,500,700,1000,2000,3000,5000,7000,10000,12500,15000,17500,20000,22500,25000,30000,35000,40000,45000,50000,55000,60000,65000,70000,75000,77500,80000,82500,85000,87500,90000,92500,95000,97500,100000
+ output_grid     = .true.
+ mode            = 1
 /
 EOF
 }
 
 output_stream_9(){
+    mkdir -p out9
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format  = "${EXPNAME}_out9_<datetime2>"     ! Output file format
- filetype         = 5 ! NetCDF4
- output_start     = "${start_date}"
- output_end       = "${end_date}"
- output_interval  = "PT6H"
- file_interval    = "P1M"
- include_last     = .true.
- ml_varlist       = 'tmax_2m','tmin_2m', 'lai', 'plcov', 'rootdp',
- output_grid      = .true.
- mode             = 1
+ filename_format = "out9/${EXPNAME}_out9_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT6H"
+ file_interval   = "P1M"
+ include_last    = .true.
+ ml_varlist      = 'tmax_2m','tmin_2m', 'lai', 'plcov', 'rootdp',
+ output_grid     = .true.
+ mode            = 1
 /
 EOF
 }
 
 output_stream_10(){
+    mkdir -p out10
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format  = "${EXPNAME}_out10_<datetime2>"     ! Output file format
+ filename_format  = "out10/${EXPNAME}_out10_<datetime2>"
  filetype         = 5 ! NetCDF4
  output_start     = "${start_date}"
  output_end       = "${end_date}"
