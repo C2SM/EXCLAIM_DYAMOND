@@ -35,7 +35,12 @@ RES=R02B06
 gridID=0021
 
 basedir="/capstor/store/cscs/userlab/cwd01/leclairm/exclaim_compilation_liskov/archive/icon_25.2_v3/icon-exclaim"
-ICON_EXE="${basedir}/build_dsl/bin/icon"
+if [ -z "${ICON_EXE}" ]; then
+    ICON_EXE="${basedir}/build_dsl/bin/icon"
+else
+    ICON_EXE=$(realpath "${ICON_EXE}")
+fi
+export ICON_EXE
 
 EXPNAME="DYAMOND_${RES}L120"
 if [ -z "${EXPDIR}" ]; then
@@ -58,6 +63,7 @@ export checkpoint_interval=${checkpoint_interval:-${restart_interval}}
 # Compute resources
 
 export ACCOUNT=${ACCOUNT:-"cwd01"}
+export PARTITION=${PARTITION:-"normal"}
 
 export no_of_nodes=${no_of_nodes:-2}
 export num_io_procs=${num_io_procs:-1}
@@ -118,8 +124,8 @@ atmo_dyn_grid="icon_grid_${gridID}_${RES}_G.nc"
 analysis_file=${input_folder}/initial_conditions/ifs2icon_2020012000_${gridID}_${RES}_G.nc 
 extpar_file=${input_folder}/external_parameter/external_parameter_icon_${gridID}_${RES}_G_tiles.nc
 
-sst_dir=${input_folder}/sst_and_seaice/r0001
-ice_dir=${input_folder}/sst_and_seaice/r0001
+sst_dir=/capstor/scratch/cscs/ppothapa/Dyamond_W_SO_SST_PREP/ESACCI-SST/final_output_daily_R02B06
+ice_dir=/capstor/scratch/cscs/ppothapa/Dyamond_W_SO_SST_PREP/ESACCI-SEAICE/final_output_daily
 
 ozone_dir=${input_folder}/ozone/r0001
 

@@ -35,7 +35,12 @@ RES=R02B10
 gridID=0017
 
 basedir="/capstor/store/cscs/userlab/cwd01/leclairm/exclaim_compilation_liskov/archive/icon_25.2_v3/icon-exclaim"
-ICON_EXE="${basedir}/build_dsl/bin/icon"
+if [ -z "${ICON_EXE}" ]; then
+    ICON_EXE="${basedir}/build_dsl/bin/icon"
+else
+    ICON_EXE=$(realpath "${ICON_EXE}")
+fi
+export ICON_EXE
 
 EXPNAME="DYAMOND_${RES}L120"
 if [ -z "${EXPDIR}" ]; then
@@ -58,6 +63,7 @@ export checkpoint_interval=${checkpoint_interval:-${restart_interval}}
 # Compute resources
 
 export ACCOUNT=${ACCOUNT:-"cwd01"}
+export PARTITION=${PARTITION:-"normal"}
 
 export no_of_nodes=${no_of_nodes:-240}
 export num_io_procs=${num_io_procs:-14}

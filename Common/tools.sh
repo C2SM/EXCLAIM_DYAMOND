@@ -3,6 +3,7 @@
 submit(){
    sbatch \
        --account="${ACCOUNT}" \
+       --partition="${PARTITION}" \
        --uenv="${UENV}" \
        --view="${VIEW}" \
        --nodes="${no_of_nodes}" \
@@ -68,21 +69,27 @@ run_model(){
    fi
 }
 
+link_item(){
+   src_item="${1}"
+   target_item="${2:-}"
+   [ -r "${src_item}" ] || (echo "ERROR ${src_item} not available"; exit 1)
+   src_item_name=$(basename "${src_item}")
+   if [ -d "${target_item}" ]; then
+       target_item="${target_item}/${src_item_name}"
+   elif [ -z "${target_item}" ]; then
+       target_item="${src_item_name}"
+   fi
+   [ -e "${target_item}" ] || ln -s "${src_item}" "${target_item}"
+}
+
 link_input(){
    source="${1}"
    target="${2:-}"
    if [ -d "${source}" ]; then
-       [ -r "${source}" ] || (echo "ERROR ${source} not available"; exit 1)
-       target_dir="${target:-$(basename "${source}")}"
-       if [ ! -e "${target_dir}" ]; then
-           ln -s "${source}" "${target:-.}"
-       fi
+       link_item "${source}" "${target}"
    else
-       for src_item in ${source}; do
-           if [ ! -e "$(basename ${src_item})" ]; then
-               [ -r "${src_item}" ] || (echo "ERROR ${src_item} not available"; exit 1)
-               ln -s "${src_item}" "${target:-.}"
-           fi
+       for src in ${source}; do
+           link_item "${src}" "${target}"
        done
    fi
 }
