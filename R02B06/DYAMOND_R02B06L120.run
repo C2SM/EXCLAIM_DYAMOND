@@ -65,10 +65,10 @@ export checkpoint_interval=${checkpoint_interval:-${restart_interval}}
 export ACCOUNT=${ACCOUNT:-"cwd01"}
 export PARTITION=${PARTITION:-"normal"}
 
-export no_of_nodes=${no_of_nodes:-2}
-export num_io_procs=${num_io_procs:-1}
+export N_NODES=${N_NODES:-2}
+export N_IO_PROCS=${N_IO_PROCS:-1}
 mpi_procs_pernode=4
-(( mpi_total_procs = no_of_nodes * mpi_procs_pernode ))
+(( mpi_total_procs = N_NODES * mpi_procs_pernode ))
 
 export WALL_TIME=${WALL_TIME:-"00:10:00"}
 
@@ -100,8 +100,8 @@ export OMP_STACKSIZE=200M
 # Some namelist parameters
 
 # en/dis-able I/O
-export enable_io=${enable_io:-"true"}
-[ "${enable_io}" == "true" ] ||  export num_io_procs=0
+export ENABLE_IO=${ENABLE_IO:-"true"}
+[ "${ENABLE_IO}" == "true" ] || export N_IO_PROCS=0
 
 # blocking length
 nproma=85000
@@ -149,7 +149,7 @@ icon_master_nml
 main_atmo_nml
 
 # Output streams. Comment out to deactivate
-if [ "${enable_io}" == "true" ]; then
+if [ "${ENABLE_IO}" == "true" ]; then
     output_stream_1
     output_stream_2
     output_stream_3

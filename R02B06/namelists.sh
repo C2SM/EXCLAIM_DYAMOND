@@ -54,7 +54,7 @@ main_atmo_nml(){
  p_test_run                   = .false.         ! From CLM namelist  (Used for MPI Verification)
  l_test_openmp                = .false.         ! From CLM namelist  (Used for OpenMP verification)
  l_log_checks                 = .true.          ! From CLM namelist  (True only for debugging)
- num_io_procs                 = ${num_io_procs}      ! Suggestion (One Node for one set of variables)
+ num_io_procs                 = ${N_IO_PROCS}      ! Suggestion (One Node for one set of variables)
  num_restart_procs            = 0               ! For Large Restart chuck, use enough number of Processors
  io_proc_chunk_size           = 2               ! Used for Large Data writing requiring large memory (eg., 3D files)
  iorder_sendrecv              = 3               ! From CLM namelist  (isend/irec)

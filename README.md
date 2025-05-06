@@ -14,8 +14,8 @@ EXPDIR
 UENV
 VIEW
 ACCOUNT
-no_of_nodes
-num_io_procs
+N_NODES
+N_IO_PROCS
 WALL_TIME
 ```
 

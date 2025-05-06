@@ -1,8 +1,8 @@
 #!/usr/bin/bash
 
 benchmark(){
-    export no_of_nodes="${1}"
-    export num_io_procs="${2}"
+    export N_NODES="${1}"
+    export N_IO_PROCS="${2}"
     export EXPDIR="./experiments/Benchmark_${1}_${2}"
     ./Diamond_R02B06L120.run
 }

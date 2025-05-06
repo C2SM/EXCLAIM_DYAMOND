@@ -1,16 +1,17 @@
 #!/usr/bin/bash
 
 submit(){
-   sbatch \
-       --account="${ACCOUNT}" \
-       --partition="${PARTITION}" \
-       --uenv="${UENV}" \
-       --view="${VIEW}" \
-       --nodes="${no_of_nodes}" \
-       --time="${WALL_TIME}" \
-       --job-name="${EXPNAME}" \
-       --output="${EXPDIR}/${EXPNAME}.%j.o" \
-       "${SCRIPT_PATH}"
+   (set -x
+    sbatch \
+        --account="${ACCOUNT}" \
+        --partition="${PARTITION}" \
+        --uenv="${UENV}" \
+        --view="${VIEW}" \
+        --nodes="${N_NODES}" \
+        --time="${WALL_TIME}" \
+        --job-name="${EXPNAME}" \
+        --output="${EXPDIR}/${EXPNAME}.%j.o" \
+        "${SCRIPT_PATH}")
 }
 
 first_submit(){
@@ -35,12 +36,13 @@ run_model(){
 
    date
 
-   srun \
-       --ntasks="${mpi_total_procs}" \
-       --ntasks-per-node="${mpi_procs_pernode}" \
-       --threads-per-core=1 \
-       --distribution="cyclic" \
-       "${SCRIPT_DIR}/../Common/santis_gpu.sh" "./icon"
+   (set -x
+    srun \
+        --ntasks="${mpi_total_procs}" \
+        --ntasks-per-node="${mpi_procs_pernode}" \
+        --threads-per-core=1 \
+        --distribution="cyclic" \
+        "${SCRIPT_DIR}/../Common/santis_gpu.sh" "./icon")
 
    date
 
