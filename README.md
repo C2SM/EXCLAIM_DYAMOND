@@ -6,7 +6,7 @@ cd Diamond_R02B06L120
 ./Diamond_R02B06L120.run
 ```
 
-These environment variables can be set to take precedence over the default ones set in the script
+These environment variables can be set to take precedence over the default ones set in the `R02BXXL120.run` scripts
 
 ``` shell
 lrestart
