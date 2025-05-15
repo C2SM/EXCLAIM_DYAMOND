@@ -10,6 +10,7 @@ These environment variables can be set to take precedence over the default ones 
 
 ``` shell
 lrestart
+basedir
 ICON_EXE
 EXPDIR
 start_date

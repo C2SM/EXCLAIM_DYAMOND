@@ -35,7 +35,7 @@ source "${SCRIPT_DIR}/../Common/tools.sh"
 RES=R02B06
 gridID=0021
 
-basedir="/capstor/scratch/cscs/ppothapa/ICON-DSL_04_2025_bugfix/todi_compilation_liskov/icon-exclaim/build_dsl"
+export basedir=${basedir:-"/capstor/scratch/cscs/ppothapa/ICON-DSL_04_2025_bugfix/todi_compilation_liskov/icon-exclaim/build_dsl"}
 if [ -z "${ICON_EXE}" ]; then
     ICON_EXE="${basedir}/bin/icon"
 else
