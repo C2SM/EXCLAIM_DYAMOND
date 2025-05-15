@@ -25,6 +25,7 @@ first_submit(){
        else
            echo "EXPDIR already exists at ${EXPDIR}"
        fi
+       export FIRST_SUBMIT="true"
        submit
        exit $?
    fi
@@ -77,11 +78,17 @@ link_item(){
    [ -r "${src_item}" ] || (echo "ERROR ${src_item} not available"; exit 1)
    src_item_name=$(basename "${src_item}")
    if [ -d "${target_item}" ]; then
-       target_item="${target_item}/${src_item_name}"
+       trg_item="${target_item}/${src_item_name}"
    elif [ -z "${target_item}" ]; then
-       target_item="${src_item_name}"
+       trg_item="${src_item_name}"
+   else
+       trg_item="${target_item}"
    fi
-   [ -e "${target_item}" ] || ln -s "${src_item}" "${target_item}"
+   if [ "${FIRST_SUBMIT}" == "true" ]; then
+       ln -sf "${src_item}" "${trg_item}"
+   elif [ ! -e "${trg_item}" ]; then
+       ln -s "${src_item}" "${trg_item}"
+   fi
 }
 
 link_input(){

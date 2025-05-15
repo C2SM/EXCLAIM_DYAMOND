@@ -6,6 +6,7 @@ set +x
 ulimit -s unlimited
 
 : "${FIRST_EXECUTION:=true}"
+: "${FIRST_SUBMIT:=false}"
 
 if [ -n "${SLURM_JOB_ID:-}" ]; then
     if [ "${FIRST_EXECUTION}" == "true" ]; then
@@ -125,7 +126,7 @@ analysis_file=${input_folder}/initial_conditions/ifs2icon_2020012000_${gridID}_$
 extpar_file=${input_folder}/external_parameter/external_parameter_icon_${gridID}_${RES}_G_tiles.nc
 
 sst_dir=/capstor/scratch/cscs/ppothapa/Dyamond_W_SO_SST_PREP/ESACCI-SST/final_output_daily_R02B06
-ice_dir=/capstor/scratch/cscs/ppothapa/Dyamond_W_SO_SST_PREP/ESACCI-SEAICE/final_output_daily
+ice_dir=/capstor/scratch/cscs/ppothapa/Dyamond_W_SO_SST_PREP/ESACCI-SEAICE/final_output_daily/R02B06
 
 ozone_dir=${input_folder}/ozone/r0001
 
