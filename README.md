@@ -10,12 +10,18 @@ These environment variables can be set to take precedence over the default ones 
 
 ``` shell
 lrestart
+ICON_EXE
 EXPDIR
-UENV
-VIEW
+start_date
+end_date
+restart_interval
+checkpoint_interval
 ACCOUNT
+PARTITION
 N_NODES
 N_IO_PROCS
 WALL_TIME
+UENV
+VIEW
 ```
 
