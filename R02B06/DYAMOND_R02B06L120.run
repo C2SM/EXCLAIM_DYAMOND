@@ -35,9 +35,9 @@ source "${SCRIPT_DIR}/../Common/tools.sh"
 RES=R02B06
 gridID=0021
 
-basedir="/capstor/store/cscs/userlab/cwd01/leclairm/exclaim_compilation_liskov/archive/icon_25.2_v3/icon-exclaim"
+basedir="/capstor/scratch/cscs/ppothapa/ICON-DSL_04_2025_bugfix/todi_compilation_liskov/icon-exclaim/build_dsl"
 if [ -z "${ICON_EXE}" ]; then
-    ICON_EXE="${basedir}/build_dsl/bin/icon"
+    ICON_EXE="${basedir}/bin/icon"
 else
     ICON_EXE=$(realpath "${ICON_EXE}")
 fi
@@ -63,7 +63,7 @@ export checkpoint_interval=${checkpoint_interval:-${restart_interval}}
 # ----------------------------------------------------------------------------
 # Compute resources
 
-export ACCOUNT=${ACCOUNT:-"cwd01"}
+export ACCOUNT=${ACCOUNT:-"cwp03"}
 export PARTITION=${PARTITION:-"normal"}
 
 export N_NODES=${N_NODES:-2}
@@ -73,8 +73,8 @@ mpi_procs_pernode=4
 
 export WALL_TIME=${WALL_TIME:-"00:10:00"}
 
-export UENV=${UENV:-"icon/25.2:v3"}
-export VIEW=${VIEW:-"default"}
+export UENV=${UENV:-"icon-wcp/v1:rc4"}
+export VIEW=${VIEW:-"icon"}
 
 # submit first here as the relevant variables are set, will be ignored afterwards
 first_submit
