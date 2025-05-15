@@ -111,7 +111,7 @@ nblocks_e=1
 
 # Time steps
 timestep="PT20S"
-timestep_phy=60
+timestep_phy=20
 
 # ----------------------------------------------------------------------------
 # Set various input paths

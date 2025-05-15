@@ -113,7 +113,7 @@ main_atmo_nml(){
  dt_conv                      = $(( 0 * timestep_phy ))  ! AD specific recomendation (Convection call)
  dt_sso                       = $(( 0 * timestep_phy ))  ! AD specific recomendation (sub surface orography call)
  dt_gwd                       = $(( 0 * timestep_phy ))  ! AD specific recomendation (gravity wave drag call)
- dt_rad                       = $((60 * timestep_phy ))  ! AD specific recomendation (radiation call)
+ dt_rad                       = $((30 * timestep_phy ))  ! AD specific recomendation (radiation call)
  dt_ccov                      = $(( 1 * timestep_phy ))  ! AD specific recomendation (cloud cover call)
  latm_above_top               = .false.   ! Take into atmo above model top for cloud cover calculation (TRUE for CLM community)
  efdt_min_raylfric            = 7200.0    ! Minimum e-folding time for Rayleigh friction ( for inwp_gwd > 0) (CLM community)
