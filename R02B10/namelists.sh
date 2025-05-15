@@ -25,19 +25,6 @@ icon_master_nml(){
   model_max_rank=65536
   model_inc_rank=1
 /
-&jsb_control_nml
- is_standalone      = .false.
- restart_jsbach     = ${lrestart}
- debug_level        = 0
- timer_level        = 0
-/
-&jsb_model_nml
- model_id = 1
- model_name = 'JSBACH'
- model_shortname = 'jsb'
- model_description = 'JSBACH'
- model_namelist_filename = "${jsbach_namelist}"
-/
 EOF
 }
 
@@ -76,73 +63,74 @@ main_atmo_nml(){
 /
 
 &run_nml
- modelTimeStep                = "${timestep}"    ! Consistent with Aquaplanet run we tried 80Sec
- num_lev                      =  120              ! AD suggested 90 levels, in line with Dyamond simulations.
- lvert_nest                   = .false.          ! No vertical nesting (but may be good option for high resolutio)
- ldynamics                    = .true.      ! dynamics
- ltransport                   = .true.      ! Tracer Transport is true
- ntracer                      = 5           ! AD suggestion
- iforcing                     = 3          ! NWP forcing
- lart                         = .false.     ! Aerosol and TraceGases ART package from KIT
- ltestcase                    = .false.     ! false: run with real data
- msg_level                    =  5          ! default: 5, much more: 20; CLM uses 13 for bebug and 0 for production run
- ltimer                       = .true.      ! Timer for monitoring runtime for specific routines
- activate_sync_timers         = .true.      !  Timer for monitoring runtime communication routines-
- timers_level                 = 10          ! Level of timer monitoring   (1 is default value)
- output                       = 'nml'       ! nml stands for new output mode
- check_uuid_gracefully        = .true.      ! Warnings for non-matching UUIDs
+ modelTimeStep                = "${timestep}"   ! Consistent with Aquaplanet run we tried 80Sec
+ num_lev                      =  120            ! AD suggested 90 levels, in line with Dyamond simulations.
+ lvert_nest                   = .false.         ! No vertical nesting (but may be good option for high resolutio)
+ ldynamics                    = .true.          ! dynamics
+ ltransport                   = .true.          ! Tracer Transport is true
+ ntracer                      = 5               ! AD suggestion
+ iforcing                     = 3               ! NWP forcing
+ lart                         = .false.         ! Aerosol and TraceGases ART package from KIT
+ ltestcase                    = .false.         ! false: run with real data
+ msg_level                    =  10             ! default: 5, much more: 20; CLM uses 13 for bebug and 0 for production run
+ ltimer                       = .true.          ! Timer for monitoring runtime for specific routines
+ activate_sync_timers         = .true.          !  Timer for monitoring runtime communication routines-
+ timers_level                 = 10              ! Level of timer monitoring   (1 is default value)
+ output                       = 'nml'           ! nml stands for new output mode
+ check_uuid_gracefully        = .true.          ! Warnings for non-matching UUIDs
 /
 
 &io_nml
- itype_pres_msl               = 5       ! Method for comoputing mean sea level pressure (Mixture of IFS and GME model DWD)
- itype_rh                     = 1       ! RH w.r.t. water (WMO type Water only)
- restart_file_type            = 5       ! 4: netcdf2, 5: netcdf4  (Consistent across model output, netcdf4)
- restart_write_mode           = "joint procs multifile"    ! For Large Runs Joint procs is recomemded from our experience
+ itype_pres_msl               = 5        ! Method for comoputing mean sea level pressure (Mixture of IFS and GME model DWD)
+ itype_rh                     = 1        ! RH w.r.t. water (WMO type Water only)
+ restart_file_type            = 5        ! 4: netcdf2, 5: netcdf4  (Consistent across model output, netcdf4)
+ restart_write_mode           = "joint procs multifile"  ! For Large Runs Joint procs is recomemded from our experience
  lflux_avg                    = .true.   ! "FALSE" output fluxes are accumulated from the beginning of the run, "TRUE" average values
  lnetcdf_flt64_output         = .false.  ! Default value is false (CK)
- precip_interval              = "P1D"   !NEW ! Works The precipitation value is accumulated in these interval otherwise accumulated fromm begining of the run
- runoff_interval              = "P1D"   !NEW ! Works The runoff is accumalted in this inetrval else accumulated from bengining.
- maxt_interval                = "P1D"   !NEW ! Works Interval at which Max/Min 2m temperture are calculated
- melt_interval                = "P1D"   !NEW  ! Works CLM community has this , Can not find discription
- lmask_boundary               = .true.             !NEW  ! Works if interpolation zone should be masked in triangular output.
+ precip_interval              = "P1D"    ! NEW ! Works The precipitation value is accumulated in these interval otherwise accumulated fromm begining of the run
+ runoff_interval              = "P1D"    ! NEW ! Works The runoff is accumalted in this inetrval else accumulated from bengining.
+ maxt_interval                = "P1D"    ! NEW ! Works Interval at which Max/Min 2m temperture are calculated
+ melt_interval                = "P1D"    ! NEW ! Works CLM community has this , Can not find discription
+ lmask_boundary               = .true.   ! NEW ! Works if interpolation zone should be masked in triangular output.
+ dt_hailcast                  = 900.
 /
 
 &nwp_phy_nml
  inwp_gscp                    = 2,    ! COSMO-DE cloud microphysisi 3 catogories, cloud-ice, snow, groupel
- mu_rain                      = 0.5   !NEW  CLM community (shape parameter in gamma distribution for rain)
- rain_n0_factor               = 0.1   !NEW  CLM community (tuning factor for intercept parameter of raindrop size distribution)
+ mu_rain                      = 0.5   ! NEW  CLM community (shape parameter in gamma distribution for rain)
+ rain_n0_factor               = 0.1   ! NEW  CLM community (tuning factor for intercept parameter of raindrop size distribution)
  icalc_reff                   = 0     ! Parametrization diagnostic calculation of effective radius
  inwp_convection              = 0     ! Tiedtke/Bechtold convection scheme on for R02B08
  inwp_radiation               = 4     ! 4 for ecRad radiation scheme
  inwp_cldcover                = 1     ! 0: no cld, 1: new diagnostic (M Koehler), 3: COSMO, 5: grid scale (CLM uses 1)
  inwp_turb                    = 1     ! 1 (COSMO diffusion and transfer)
  inwp_satad                   = 1     ! Saturation adjustment at constant densit (CLM community)
- inwp_sso                     = 0     !  Sub-grid scale orographic drag   (Lott and Miller Scheme (COMSO))
- inwp_gwd                     = 0     !  Non Orographic gravity wave drag (Orr-Ern-Bechtold Scheme)
- inwp_surface                 = 1     !  1 is TERRA and 2 is JSBACH.
- icapdcycl                    = 3     !  Type of Cape Correction for improving diurnal cycle (correction over land restricted to land , no correction over ocean, appklication over tropic)
- itype_z0                     = 2       !  CLM community uses 2: (land-cover-related roughness based on tile-specific landuse class)
- dt_conv                      = $(( 0 * timestep_phy))     !AD specific  recomendation  (Convection call)
- dt_sso                       = $(( 0 * timestep_phy))   ! AD specific recomendation   (sub surface orography call)
- dt_gwd                       = $(( 0 * timestep_phy))   ! AD specific recomendation   (gravity wave drag call)
- dt_rad                       = $(( 60 * timestep_phy))    ! AD specific recomendation   (radiation call)
- dt_ccov                      = $(( 1 * timestep_phy))  ! AD specific recomendation   (cloud cover call)
- latm_above_top               = .false.           ! Take into atmo above model top for cloud cover calculation (TRUE for CLM community)
- efdt_min_raylfric            = 7200.0            ! Minimum e-folding time for Rayleigh friction ( for inwp_gwd > 0) (CLM community)
- icpl_aero_conv               = 0                 ! Coupling of Tegen aerosol climmatology ( for irad_aero = 6)
- icpl_aero_gscp               = 0                 ! Coupling of aerosol tto large scale preciptation
- ldetrain_conv_prec           = .false.            ! Detraintment of convective rain and snow. (for inwp_convection = 1)
- lrtm_filename                = "${icon_base_data_dir}/rrtmg_lw.nc" ! (rrtm inactive)
- cldopt_filename              = "${icon_base_data_dir}/ECHAM6_CldOptProps.nc" ! RRTM inactive
+ inwp_sso                     = 0     ! Sub-grid scale orographic drag   (Lott and Miller Scheme (COMSO))
+ inwp_gwd                     = 0     ! Non Orographic gravity wave drag (Orr-Ern-Bechtold Scheme)
+ inwp_surface                 = 1     ! 1 is TERRA and 2 is JSBACH.
+ icapdcycl                    = 3     ! Type of Cape Correction for improving diurnal cycle (correction over land restricted to land , no correction over ocean, appklication over tropic)
+ itype_z0                     = 2     ! CLM community uses 2: (land-cover-related roughness based on tile-specific landuse class)
+ dt_conv                      = $(( 0 * timestep_phy ))  ! AD specific recomendation (Convection call)
+ dt_sso                       = $(( 0 * timestep_phy ))  ! AD specific recomendation (sub surface orography call)
+ dt_gwd                       = $(( 0 * timestep_phy ))  ! AD specific recomendation (gravity wave drag call)
+ dt_rad                       = $((60 * timestep_phy ))  ! AD specific recomendation (radiation call)
+ dt_ccov                      = $(( 1 * timestep_phy ))  ! AD specific recomendation (cloud cover call)
+ latm_above_top               = .false.   ! Take into atmo above model top for cloud cover calculation (TRUE for CLM community)
+ efdt_min_raylfric            = 7200.0    ! Minimum e-folding time for Rayleigh friction ( for inwp_gwd > 0) (CLM community)
+ icpl_aero_conv               = 0         ! Coupling of Tegen aerosol climmatology ( for irad_aero = 6)
+ icpl_aero_gscp               = 0         ! Coupling of aerosol tto large scale preciptation
+ ldetrain_conv_prec           = .false.   ! Detraintment of convective rain and snow. (for inwp_convection = 1)
+ lrtm_filename                = "rrtmg_lw.nc"             ! (rrtm inactive)
+ cldopt_filename              = "ECHAM6_CldOptProps.nc"   ! RRTM inactive
 /
 
 &radiation_nml
- ecrad_isolver                =   2   ! CK comment (for GPU =2 , CPU = 0)
- irad_o3                      =  5   ! ! PPK changed to 0 CLM communitny recomendation   (ice from tracer variable)
+ ecrad_isolver                = 2           ! CK comment (for GPU =2 , CPU = 0)
+ irad_o3                      = 5           ! ! PPK changed to 0 CLM communitny recomendation   (ice from tracer variable)
  irad_o2                      = 2           ! Tracer variable (CLM commnity)
  irad_cfc11                   = 2           ! Tracer variableTracer variable (co2, ch4,n20,o2,cfc11,cfc12))
  irad_cfc12                   = 2           ! Tracer Variable (cfc12)
- irad_aero                    = 18           ! Aerosol data ( Tegen aerosol climatology)
+ irad_aero                    = 18          ! Aerosol data ( Tegen aerosol climatology)
  albedo_type                  = 2           !  2: Modis albedo
  direct_albedo                = 4           !NEW direct beam surface albedo (Briegleb & Ramanatha for snow-free land points, Ritter-Geleyn for ice and Zängl for snow)
  albedo_whitecap              = 1           ! NEW CLM community (whitecap describtion by Seferian et al 2018)
@@ -156,126 +144,123 @@ main_atmo_nml(){
 /
 
 &nonhydrostatic_nml
- iadv_rhotheta                = 2            ! Advection method for density and potential density (Default)
- ivctype                      = 2            ! Sleeve vertical coordinate, default
- itime_scheme                 = 4            ! default Contravariant vertical velocityin predictor step, velocty tendencis in corrector step
- exner_expol                  = 0.333        ! Temporal extrapolation (default = 1/3) (For R2B5 or Coarser use 1/2 and 2/3 recomendation)
- vwind_offctr                 = 0.2           ! Off-centering vertical wind solver
- damp_height                  = 30000.        ! AD recomendation (rayeigh damping starts at this lelev in meters)
- rayleigh_coeff               = 0.5           ! AD recomendation based on APE testing wiht Praveen-
- divdamp_order                = 24            ! Default value (Combined second and fourth order divergence damping
- divdamp_type                 = 32            ! Defaul value (3D divergence)
- divdamp_fac                  = 0.004         ! Default value (scaling factor for divergence damping)
- divdamp_trans_start          = 12500.0       ! Lower bound of transition zone between 2D and 3D divergence damoping)
- divdamp_trans_end            = 17500.0       ! Upper bound
- igradp_method                = 3             ! Default (Discritization of horizontal pressure gradient (tyloer expansion))
- l_zdiffu_t                   = .true.       ! Smagorinsky temperature diffuciton truly horizontally over steep slopes
- thslp_zdiffu                 = 0.02         ! Slope thershold for activation of temperature difusion
- thhgtd_zdiffu                = 125.         ! Height difference between two neighbouring points ! CLM value
- htop_moist_proc              = 22500.       ! Height above whihc ophysical processes are turned off
- hbot_qvsubstep               = 16000.       ! Height above which Qv i s advected wih substepping
- ndyn_substeps                 = 5           ! Default value for dynamical sub-stepping
+ iadv_rhotheta                = 2         ! Advection method for density and potential density (Default)
+ ivctype                      = 2         ! Sleeve vertical coordinate, default
+ itime_scheme                 = 4         ! default Contravariant vertical velocityin predictor step, velocty tendencis in corrector step
+ exner_expol                  = 0.333     ! Temporal extrapolation (default = 1/3) (For R2B5 or Coarser use 1/2 and 2/3 recomendation)
+ vwind_offctr                 = 0.2       ! Off-centering vertical wind solver
+ damp_height                  = 30000.    ! AD recomendation (rayeigh damping starts at this lelev in meters)
+ rayleigh_coeff               = 0.5       ! AD recomendation based on APE testing wiht Praveen-
+ divdamp_order                = 24        ! Default value (Combined second and fourth order divergence damping
+ divdamp_type                 = 32        ! Defaul value (3D divergence)
+ divdamp_fac                  = 0.004     ! Default value (scaling factor for divergence damping)
+ divdamp_trans_start          = 12500.0   ! Lower bound of transition zone between 2D and 3D divergence damoping)
+ divdamp_trans_end            = 17500.0   ! Upper bound
+ igradp_method                = 3         ! Default (Discritization of horizontal pressure gradient (tyloer expansion))
+ l_zdiffu_t                   = .true.    ! Smagorinsky temperature diffuciton truly horizontally over steep slopes
+ thslp_zdiffu                 = 0.02      ! Slope thershold for activation of temperature difusion
+ thhgtd_zdiffu                = 125.      ! Height difference between two neighbouring points ! CLM value
+ htop_moist_proc              = 22500.    ! Height above whihc ophysical processes are turned off
+ hbot_qvsubstep               = 16000.    ! Height above which Qv i s advected wih substepping
+ ndyn_substeps                = 5         ! Default value for dynamical sub-stepping
 /
 
 &sleve_nml
-  min_lay_thckn   = 200.         ! Layer thickness of lowermost layer (CLM recommendation)  !! I USED 200M!! USE THE DEFALUT 50M
-!  max_lay_thckn   = 400.        ! May layer thickness below th height given by htop_thcknlimit (CLM & NWP recomendation 400)
-  htop_thcknlimit = 15000.     ! Height below which the layer thickness does not exceed max_lay_thckn (CLM recomendation)
-  top_height      = 85000.     ! Height of the model top (AD recomendation)
-  stretch_fac     = 0.9        ! Stretching factor to vary distribution of model levels (<1 increase layer thicknedd near model top)
- decay_scale_1    = 4000.  ! Decay scale of large-scale topography  (Default Value)
- decay_scale_2    = 2500.  ! Decay scale of small-scale topography  (Default Value)
- decay_exp        = 1.2    ! Exponent of decay function (Default value in meters)
- flat_height      = 25000. ! Height above whihc coordinatre surfaces are flat  (default value)
+ min_lay_thckn   = 50.      ! Layer thickness of lowermost layer (CLM recommendation)  !! I USED 200M!! USE THE DEFALUT 50M
+! max_lay_thckn   = 400.     ! May layer thickness below th height given by htop_thcknlimit (CLM & NWP recomendation 400)
+ htop_thcknlimit = 15000.   ! Height below which the layer thickness does not exceed max_lay_thckn (CLM recomendation)
+ top_height      = 85000.   ! Height of the model top (AD recomendation)
+ stretch_fac     = 0.9      ! Stretching factor to vary distribution of model levels (<1 increase layer thicknedd near model top)
+ decay_scale_1   = 4000.    ! Decay scale of large-scale topography  (Default Value)
+ decay_scale_2   = 2500.    ! Decay scale of small-scale topography  (Default Value)
+ decay_exp       = 1.2      ! Exponent of decay function (Default value in meters)
+ flat_height     = 25000.   ! Height above whihc coordinatre surfaces are flat  (default value)
 /
 
 &dynamics_nml
- iequations                   = 3      ! Non-hydrostatic atmsophere
- divavg_cntrwgt               = 0.50    ! Weight of central cell for divergence averaging
- lcoriolis                    = .true. ! Coriolis force ofcourse true for real cases
+ iequations     = 3        ! Non-hydrostatic atmsophere
+ divavg_cntrwgt = 0.50     ! Weight of central cell for divergence averaging
+ lcoriolis      = .true.   ! Coriolis force ofcourse true for real cases
 /
 
 &transport_nml
- ihadv_tracer                =               2,2,2,2,2,2         ! (AD recomendaiton)gdm: 52 combination of hybrid FFSL/Miura3 with subcycling
- itype_hlimit                =               4,4,4,4,4,4         ! (AD recomendaiton) type of limiter for horizontal transport
- ivadv_tracer                =               3,3,3,3,3,3         ! (AD recomendaiton) tracer specific method to compute vertical advection
- itype_vlimit                =               1,1,1,1,1,1         ! (AD recomendaiton) Type of limiter for vertical transport
- ivlimit_selective           =               1,1,1,1,1,1
- llsq_svd                    =                     .true.        ! (AD recomendaiton)use SV decomposition for least squares design matrix
+ ihadv_tracer      = 2,2,2,2,2,2   ! (AD recomendaiton)gdm: 52 combination of hybrid FFSL/Miura3 with subcycling
+ itype_hlimit      = 4,4,4,4,4,4   ! (AD recomendaiton) type of limiter for horizontal transport
+ ivadv_tracer      = 3,3,3,3,3,3   ! (AD recomendaiton) tracer specific method to compute vertical advection
+ itype_vlimit      = 1,1,1,1,1,1   ! (AD recomendaiton) Type of limiter for vertical transport
+ ivlimit_selective = 1,1,1,1,1,1
+ llsq_svd          = .true.        ! (AD recomendaiton)use SV decomposition for least squares design matrix
 /
 
 &diffusion_nml
- hdiff_order                  = 5      ! Smagorinsky diffusiton combined with 4rth order background diffusion
- itype_vn_diffu               = 1      ! (u,v reconstruction atvertices only)  Default of CLM
- itype_t_diffu                = 2      ! (Discritization of temp diffusion, default value of CLM)
- hdiff_efdt_ratio             = 32.0       ! Ratio iof e-forlding time to time step, recomemded values above 30 (CLM value)
- hdiff_smag_fac               = 0.025      ! Scaling factor for Smagorninsky diffusion (CLM value)
- lhdiff_vn                    = .true.     ! Diffusion of horizontal winds
- lhdiff_temp                  = .true.     ! Diffusion of temperature field
+ hdiff_order      = 5        ! Smagorinsky diffusiton combined with 4rth order background diffusion
+ itype_vn_diffu   = 1        ! (u,v reconstruction atvertices only)  Default of CLM
+ itype_t_diffu    = 2        ! (Discritization of temp diffusion, default value of CLM)
+ hdiff_efdt_ratio = 32.0     ! Ratio iof e-forlding time to time step, recomemded values above 30 (CLM value)
+ hdiff_smag_fac   = 0.025    ! Scaling factor for Smagorninsky diffusion (CLM value)
+ lhdiff_vn        = .true.   ! Diffusion of horizontal winds
+ lhdiff_temp      = .true.   ! Diffusion of temperature field
 /
 
 &gridref_nml
- grf_intmethod_ct             = 2  ! interpolation method for grid refinment (gradient based interpolation, default value)
- grf_intmethod_e              = 6   ! default 6 Interpolation ,method for edge based bariables
- grf_tracfbk                  = 2   ! Bilinear interpolation
- denom_diffu_v                = 150.  ! Deniminator for lateral boundary diffusion of temperature
+ grf_intmethod_ct = 2      ! interpolation method for grid refinment (gradient based interpolation, default value)
+ grf_intmethod_e  = 6      ! default 6 Interpolation ,method for edge based bariables
+ grf_tracfbk      = 2      ! Bilinear interpolation
+ denom_diffu_v    = 150.   ! Deniminator for lateral boundary diffusion of temperature
 /
 
 &extpar_nml
- extpar_filename              = "$(basename ${extpar_file})"
- itopo                        = 1    ! Topography read from file
- n_iter_smooth_topo             = 1  ! iterations of topography smoother
- heightdiff_threshold           = 3000. ! height difference between neighboring grid points above which additional local nabla2 diffusion is applied
- hgtdiff_max_smooth_topo        = 750.  ! RMS height difference to neighbor grid points at which the smoothing pre-factor fac_smooth_topo reaches its maximum value (CLM value)
- itype_vegetation_cycle         = 3    !NEW  (CLM value , but not defined. Annual cycle of Leaf Area Index, use T2M to get realistic values)
- itype_lwemiss                  = 2    !NEW  Type of data for Long wave surfae emissitvity (Read from monthly climatologoies from expar file)
+ extpar_filename         = "$(basename ${extpar_file})"
+ itopo                   = 1       ! Topography read from file
+ n_iter_smooth_topo      = 1       ! iterations of topography smoother
+ heightdiff_threshold    = 3000.   ! height difference between neighboring grid points above which additional local nabla2 diffusion is applied
+ hgtdiff_max_smooth_topo = 750.    ! RMS height difference to neighbor grid points at which the smoothing pre-factor fac_smooth_topo reaches its maximum value (CLM value)
+ itype_vegetation_cycle  = 3       ! NEW  (CLM value , but not defined. Annual cycle of Leaf Area Index, use T2M to get realistic values)
+ itype_lwemiss           = 2       ! NEW  Type of data for Long wave surfae emissitvity (Read from monthly climatologoies from expar file)
 /
-
-
 
 ! This are NWP tuning recomendation from CLM community
 
 &nwp_tuning_nml
-  itune_albedo = 0
-  tune_gkwake   = 1.5
-  tune_gfrcrit  = 0.425
-  tune_gkdrag   = 0.075
-  tune_dust_abs = 1.
-  tune_zvz0i    = 0.85
+  itune_albedo     = 0
+  tune_gkwake      = 1.5
+  tune_gfrcrit     = 0.425
+  tune_gkdrag      = 0.075
+  tune_dust_abs    = 1.
+  tune_zvz0i       = 0.85
   tune_box_liq_asy = 3.25
   tune_minsnowfrac = 0.2
-  tune_gfluxlaun  = 3.75e-3
-  tune_rcucov = 0.075
-  tune_rhebc_land = 0.825
-  tune_gust_factor=7.0
+  tune_gfluxlaun   = 3.75e-3
+  tune_rcucov      = 0.075
+  tune_rhebc_land  = 0.825
+  tune_gust_factor = 7.0
 /
 
 !Turbulance diffusion tuining based on the CLM community recomendation (This needs to be checked for Silje & Pothapakula Namelist)
 
 &turbdiff_nml
-  tkhmin  = 0.6
-  tkhmin_strat = 1.0
+  tkhmin        = 0.6
+  tkhmin_strat  = 1.0
   tkmmin        = 0.75
   pat_len       = 750.
-  c_diff  =  0.2
-  rlam_heat = 10.0
-  rat_sea =  0.8
-  ltkesso = .true.
+  c_diff        =  0.2
+  rlam_heat     = 10.0
+  rat_sea       =  0.8
+  ltkesso       = .true.
   frcsmot       = 0.2
   imode_frcsmot = 2
-  alpha1  = 0.125
-  icldm_turb = 1
-  itype_sher = 1
+  alpha1        = 0.125
+  icldm_turb    = 1
+  itype_sher    = 1
   ltkeshs       = .true.
   a_hshr        = 2.0
 /
-
 
 ! This corresponds to the TERRA namelist based on the CLM community recomendation
 
 &lnd_nml
   sstice_mode    = 6  ! 4: SST and sea ice fraction are updated daily,
-                       !    based on actual monthly means
+                      !    based on actual monthly means
   ntiles         = 3
   nlev_snow      = 1
   zml_soil       = 0.005,0.02,0.06,0.18,0.54,1.62,4.86,14.58
@@ -302,86 +287,170 @@ EOF
 # Output streams
 # --------------
 
-output_stream_1.1(){
+output_stream_1_1(){
+    # FOR DYAMOND PROTOCOL # 3D Variables on native grid, 3 hourly (as per the
+    # Dyamond Protocol 6 hourly), 37 pressure levels.
+    # => This needs to be interpolated onto 10KM (25KM for Dyamond)
     mkdir -p out1
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out1/${EXPNAME}_out1.1_<datetime2>"
- filetype        = 5 ! NetCDF4
- output_start    = "${start_date}"
- output_end      = "${end_date}"
- output_interval = "PT6H"
- file_interval   = "PT6H"
- include_last    = .true.
- pl_varlist      = 'qc', 'qr', 'qi'
- p_levels        = 100,200,300,500,700,1000,2000,3000,5000,7000,10000,12500,15000,17500,20000,22500,25000,30000,35000,40000,45000,50000,55000,60000,65000,70000,75000,77500,80000,82500,85000,87500,90000,92500,95000,97500,100000
- output_grid     =  .true.
- mode            =   1
-/
-EOF
-}
-
-output_stream_1.2(){
-    mkdir -p out1
-    cat >> ${atmo_namelist} << EOF
-
-&output_nml
- filename_format = "out1/${EXPNAME}_out1.2_<datetime2>"
- filetype        = 5 ! NetCDF4
- output_start    = "${start_date}"
- output_end      = "${end_date}"
- output_interval = "PT6H"
- file_interval   = "PT6H"
- include_last    = .true.
- pl_varlist      = 'qs', 'qg', 'temp'
- p_levels        = 100,200,300,500,700,1000,2000,3000,5000,7000,10000,12500,15000,17500,20000,22500,25000,30000,35000,40000,45000,50000,55000,60000,65000,70000,75000,77500,80000,82500,85000,87500,90000,92500,95000,97500,100000
- output_grid     =  .true.
- mode            =   1
-/
-EOF
-}
-
-output_stream_1.3(){
-    mkdir -p out1
-    cat >> ${atmo_namelist} << EOF
-
-&output_nml
- filename_format = "out1/${EXPNAME}_out1.3_<datetime2>"
- filetype        = 5 ! NetCDF4
- output_start    = "${start_date}"
- output_end      = "${end_date}"
- output_interval = "PT6H"
- file_interval   = "PT6H"
- include_last    = .true.
- pl_varlist      = 'u', 'v', 'w'
- p_levels        = 100,200,300,500,700,1000,2000,3000,5000,7000,10000,12500,15000,17500,20000,22500,25000,30000,35000,40000,45000,50000,55000,60000,65000,70000,75000,77500,80000,82500,85000,87500,90000,92500,95000,97500,100000
- output_grid     =  .true.
- mode            =   1
-/
-EOF
-}
-
-output_stream_2(){
-    mkdir -p out2
-    cat >> ${atmo_namelist} << EOF
-
-&output_nml
- filename_format = "out2/${EXPNAME}_out2_<datetime2>"
+ filename_format = "out1/${EXPNAME}_out1_1_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
  output_interval = "PT3H"
  file_interval   = "P1D"
- ml_varlist      = 'tqc','tqi','tqv','tqr','tqs','h_snow','tot_prec'
+ include_last    = .true.
+ pl_varlist      = 'geopot','qv','rh'
+ p_levels        = 100,200,300,500,700,1000,2000,3000,5000,7000,10000,12500,15000,17500,20000,22500,25000,30000,35000,40000,45000,50000,55000,60000,65000,70000,75000,77500,80000,82500,85000,87500,90000,92500,95000,97500,100000
+ output_grid     = .true.
+ mode            = 1
+/
+EOF
+}
+
+output_stream_1_2(){
+    # FOR DYAMOND PROTOCOL # 3D Variables on native grid, 3 hourly (as per the
+    # Dyamond Protocol 6 hourly), 37 pressure levels.
+    # => This needs to be interpolated onto 10KM (25KM for Dyamond)
+    mkdir -p out1
+    cat >> ${atmo_namelist} << EOF
+
+&output_nml
+ filename_format = "out1/${EXPNAME}_out1_2_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT3H"
+ file_interval   = "P1D"
+ include_last    = .true.
+ pl_varlist      = 'qc','qr','qi'
+ p_levels        = 100,200,300,500,700,1000,2000,3000,5000,7000,10000,12500,15000,17500,20000,22500,25000,30000,35000,40000,45000,50000,55000,60000,65000,70000,75000,77500,80000,82500,85000,87500,90000,92500,95000,97500,100000
+ output_grid     = .true.
+ mode            = 1
+/
+EOF
+}
+
+output_stream_1_3(){
+    # FOR DYAMOND PROTOCOL # 3D Variables on native grid, 3 hourly (as per the
+    # Dyamond Protocol 6 hourly), 37 pressure levels.
+    # => This needs to be interpolated onto 10KM (25KM for Dyamond)
+    mkdir -p out1
+    cat >> ${atmo_namelist} << EOF
+
+&output_nml
+ filename_format = "out1/${EXPNAME}_out1_3_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT3H"
+ file_interval   = "P1D"
+ include_last    = .true.
+ pl_varlist      = 'qs','qg','temp'
+ p_levels        = 100,200,300,500,700,1000,2000,3000,5000,7000,10000,12500,15000,17500,20000,22500,25000,30000,35000,40000,45000,50000,55000,60000,65000,70000,75000,77500,80000,82500,85000,87500,90000,92500,95000,97500,100000
+ output_grid     = .true.
+ mode            = 1
+/
+EOF
+}
+
+output_stream_1_4(){
+    # FOR DYAMOND PROTOCOL # 3D Variables on native grid, 3 hourly (as per the
+    # Dyamond Protocol 6 hourly), 37 pressure levels.
+    # => This needs to be interpolated onto 10KM (25KM for Dyamond)
+    mkdir -p out1
+    cat >> ${atmo_namelist} << EOF
+
+&output_nml
+ filename_format = "out1/${EXPNAME}_out1_4_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT3H"
+ file_interval   = "P1D"
+ include_last    = .true.
+ pl_varlist      = 'u','v','w'
+ p_levels        = 100,200,300,500,700,1000,2000,3000,5000,7000,10000,12500,15000,17500,20000,22500,25000,30000,35000,40000,45000,50000,55000,60000,65000,70000,75000,77500,80000,82500,85000,87500,90000,92500,95000,97500,100000
+ output_grid     = .true.
+ mode            = 1
+/
+EOF
+}
+
+
+output_stream_1_5(){
+    # FOR DYAMOND PROTOCOL # 3D Variables on native grid, 3 hourly (as per the
+    # Dyamond Protocol 6 hourly), 37 pressure levels. Extra Variables, not
+    # required for Dyamond.
+    # => This needs to be interpolated onto 10KM.
+    mkdir -p out1
+    cat >> ${atmo_namelist} << EOF
+
+&output_nml
+ filename_format = "out1/${EXPNAME}_out1_5_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT3H"
+ file_interval   = "P1D"
+ include_last    = .true.
+ pl_varlist      = 'omega','rho','pv','tke'
+ p_levels        = 100,200,300,500,700,1000,2000,3000,5000,7000,10000,12500,15000,17500,20000,22500,25000,30000,35000,40000,45000,50000,55000,60000,65000,70000,75000,77500,80000,82500,85000,87500,90000,92500,95000,97500,100000
+ output_grid     = .true.
+ mode            = 1
+/
+EOF
+}
+
+output_stream_2_1(){
+    # FOR DYAMOND PROTOCOL, NATIVE GRID # 2D variables on Native Grid, according
+    # to Dyamond protocol - [Cyclone Tracking or MCS on Native Grid, Hourly
+    # Resolution]
+    # => Also Interpolate onto 10KM Grid for Dyamond. (Both formats are
+    # necessay)
+    mkdir -p out2
+    cat >> ${atmo_namelist} << EOF
+
+&output_nml
+ filename_format = "out2/${EXPNAME}_out2_1_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT15M"
+ file_interval   = "P1D"
+ ml_varlist      = 'tot_prec','DHAIL_MX'
  include_last    = .true.
  output_grid     = .true.
- mode            =  1
+ mode            = 1
+/
+EOF
+}
+
+output_stream_2_2(){
+    mkdir -p out2
+    cat >> ${atmo_namelist} << EOF
+
+&output_nml
+ filename_format = "out2/${EXPNAME}_out2_2_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT1H"
+ file_interval   = "P1D"
+ml_varlist       = 'pres_sfc','pres_msl','u_10m','v_10m','tot_prec','qv_2m','t_2m','tqc','tqi','tqv','tqr','h_snow','gust10'
+ include_last    = .true.
+ output_grid     = .true.
+ mode            = 1
 /
 EOF
 }
 
 output_stream_3(){
+    # FOR DYAMOND PROTOCOL, NATIVE GRID # 2D variables on Native Grid, according
+    # to Dyamond protocol- [For Convection], Only 'w' is asked, but included u,v
+    # for turbine impact studies (if needed)
     mkdir -p out3
     cat >> ${atmo_namelist} << EOF
 
@@ -390,7 +459,29 @@ output_stream_3(){
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
- output_interval = "PT3H"
+ output_interval = "PT1H"
+ file_interval   = "P1D"
+ hl_varlist      = 'u','v','w'
+ h_levels        =  10.0, 500.0, 2500, 5000, 7500
+ include_last    = .true.
+ output_grid     = .true.
+ mode            = 1
+/
+EOF
+}
+
+output_stream_4(){
+    # FOR DYAMOND PROTOCOL, Atmosphere 2D variables, hourly interval
+    # => Need to be interpolated onto 12.5KM regular grid (25KM for Dyamond)
+    mkdir -p out4
+    cat >> ${atmo_namelist} << EOF
+
+&output_nml
+ filename_format = "out4/${EXPNAME}_out4_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT1H"
  file_interval   = "P1D"
  ml_varlist      = 'qhfl_s','lhfl_s','shfl_s', 'umfl_s','vmfl_s','pres_sfc','pres_msl'
  include_last    = .true.
@@ -400,26 +491,10 @@ output_stream_3(){
 EOF
 }
 
-output_stream_4(){
-    mkdir -p out4
-    cat >> ${atmo_namelist} << EOF
-
-&output_nml
- filename_format = "out4/${EXPNAME}_out4_<datetime2>"
- filetype        = 5 ! NetCDF4
- output_start    = "${start_date}"
- output_end      = "${end_date}"
- output_interval = "PT3H"
- file_interval   = "P1D"
- ml_varlist      = 'thu_s','sob_s','sob_t','sod_t','sodifd_s','thb_s','sou_s','thb_t','sobclr_s','sou_t','sou_s'
- include_last    = .true.
- output_grid     = .true.
- mode            = 1
-/
-EOF
-}
-
 output_stream_5(){
+    # FOR DYAMOND PROTOCOL, NATIVE GRID, Atmosphere 2D variables, hourly
+    # interval, But Prof. Prein request for Native Grid.
+    # => Need to be interpolated onto 12.5KM regular grid (25KM for Dyamond)
     mkdir -p out5
     cat >> ${atmo_namelist} << EOF
 
@@ -430,15 +505,23 @@ output_stream_5(){
  output_end      = "${end_date}"
  output_interval = "PT1H"
  file_interval   = "P1D"
- ml_varlist      = 'clct','clcm','clcl','clch','qv_2m','rh_2m','t_2m','t_g','td_2m','u_10m','v_10m','gust10','sp_10m'
+ ml_varlist      = 'thu_s','sob_s','sob_t','sod_t','sodifd_s','thb_s','sou_s','thb_t','sobclr_s','sou_t','thbclr_s'
  include_last    = .true.
  output_grid     = .true.
  mode            = 1
 /
 EOF
+    # sod_s mot found, sodifu_s not found, sodird_s not found, thd_s not found,
+    # sobclr_t not found, thbclr_t not found! 'sodifu_s','sodird_s' not found
+    # In the out7, we are trying to output the Radiation terms which are 3D
+    # i.e., written on the model levels. (lwflx_dn_clr, lwflx_dn, lwflx_up_clr,
+    # lwflx_up, lwflxall, swflx_dn_clr, swflx_dn, swflx_up_clr, swflx_up)
 }
 
+
 output_stream_6(){
+    # FOR DYAMOND PROTOCOL , #Atmosphere 2D variables
+    # => Need to be interpolated onto 12.5KM regular grid (25KM for Dyamond)
     mkdir -p out6
     cat >> ${atmo_namelist} << EOF
 
@@ -449,7 +532,7 @@ output_stream_6(){
  output_end      = "${end_date}"
  output_interval = "PT1H"
  file_interval   = "P1D"
- ml_varlist      = 'pres_msl','u_10m','v_10m','tot_prec','qv_2m','t_2m','thb_t','sou_t','tqc','tqi','tqv','tqr',
+ ml_varlist      = 'clct','clcm','clcl','clch','qv_2m','rh_2m','t_2m','t_g','td_2m','u_10m','v_10m','sp_10m','gust10'
  include_last    = .true.
  output_grid     = .true.
  mode            = 1
@@ -458,6 +541,8 @@ EOF
 }
 
 output_stream_7(){
+    # CAPE and LCL for Process Studies, Hourly Resolution
+    # => Need to be interpolated onto 12.5KM regular grid
     mkdir -p out7
     cat >> ${atmo_namelist} << EOF
 
@@ -467,17 +552,19 @@ output_stream_7(){
  output_start    = "${start_date}"
  output_end      = "${end_date}"
  output_interval = "PT1H"
- file_interval   = "PT6H"
+ file_interval   = "P1D"
  include_last    = .true.
- hl_varlist      = 'temp','u','v','w'
- h_levels        = 10.0, 500.0, 2500, 5000, 7500
+ ml_varlist      = 'cape_ml','cape','lcl_ml','lfc_ml','cin_ml','DBZ_CMAX','GRAUPEL_GSP'
  output_grid     = .true.
  mode            = 1
 /
 EOF
+    # LPI and LPI_MAX do not work, as they are only ported on Reduced Grid, as MeteoSwiss uses reduced grid.
 }
 
 output_stream_8(){
+    # LAND VARIABLES @ 3 hours
+    # => Need to be interpolated onto 12.5KM regular grid
     mkdir -p out8
     cat >> ${atmo_namelist} << EOF
 
@@ -486,27 +573,7 @@ output_stream_8(){
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
- output_interval = "PT1H"
- file_interval   = "P1D"
- ml_varlist      = 'cape_ml','cape','lcl_ml','lfc_ml','cin_ml','clct','clcl','clcm','DBZ_CMAX','GRAUPEL_GSP','LPI',
-                   'LPI_MAX','GRAUPEL_GSP'
- include_last    = .true.
- output_grid     = .true.
- mode            = 1
-/
-EOF
-}
-
-output_stream_9(){
-    mkdir -p out9
-    cat >> ${atmo_namelist} << EOF
-
-&output_nml
- filename_format = "out9/${EXPNAME}_out9_<datetime2>"
- filetype        = 5 ! NetCDF4
- output_start    = "${start_date}"
- output_end      = "${end_date}"
- output_interval = "PT1H"
+ output_interval = "PT3H"
  file_interval   = "P1D"
  ml_varlist      = 'smi','w_i','t_so','w_so','freshsnow','rho_snow','w_snow','t_s','t_g'
  include_last    = .true.
@@ -516,7 +583,31 @@ output_stream_9(){
 EOF
 }
 
+output_stream_9(){
+    # variables not a part of Dyamond but are of interest
+    # => Need to be interpolated onto 12.5KM regular grid
+    mkdir -p out9
+    cat >> ${atmo_namelist} << EOF
+
+&output_nml
+ filename_format = "out9/${EXPNAME}_out9_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT3H"
+ file_interval   = "P1D"
+ ml_varlist      = 'runoff_g','runoff_s','snow_gsp','snow_melt'
+ include_last    = .true.
+ output_grid     = .true.
+ mode            = 1
+/
+EOF
+}
+
 output_stream_10(){
+    # NATIVE GRID 3D variables hourly for tracking on 2.5KM regular grid on
+    # pressure levels (On the Native Grid)
+    # => Need to be interpolated onto 2.5KM regular grid
     mkdir -p out10
     cat >> ${atmo_namelist} << EOF
 
@@ -527,7 +618,8 @@ output_stream_10(){
  output_end      = "${end_date}"
  output_interval = "PT1H"
  file_interval   = "P1D"
- ml_varlist      = 'runoff_g','runoff_s','snow_gsp','td_2m','gust10','sp_10m','snow_melt'
+ pl_varlist      = 'geopot','temp','u','v'
+ p_levels        =  20000,50000,85000
  include_last    = .true.
  output_grid     = .true.
  mode            = 1
@@ -536,6 +628,8 @@ EOF
 }
 
 output_stream_11(){
+    # Extreme Temperatures @ 3 hours
+    # => Need to be interpolated onto 12.5KM regular grid
     mkdir -p out11
     cat >> ${atmo_namelist} << EOF
 
@@ -544,10 +638,10 @@ output_stream_11(){
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
- output_interval = "PT1H"
+ output_interval = "PT3H"
  file_interval   = "P1D"
- include_last    = .true.
  ml_varlist      = 'tmax_2m','tmin_2m', 'lai', 'plcov', 'rootdp',
+ include_last    = .true.
  output_grid     = .true.
  mode            = 1
 /
@@ -555,6 +649,8 @@ EOF
 }
 
 output_stream_12(){
+    # Outputing on Model Levels @ 6 hourly, but interpolation for 12.5KM for 3D
+    # => Need to be interpolated onto 12.5KM regular grid
     mkdir -p out12
     cat >> ${atmo_namelist} << EOF
 
@@ -563,10 +659,152 @@ output_stream_12(){
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
+ output_interval = "PT6H"
+ file_interval   = "P1D"
+ ml_varlist      = 'pres'
+ include_last    = .true.
+ output_grid     = .true.
+ mode            = 1
+/
+EOF
+}
+
+output_stream_13(){
+    # (NATIVE + Interpolated ) Outputing on Model Levels @ 1 hourly
+    # => 2.5KM Native grid for surface levels, but interpolation to 12.5KM for 3D
+    mkdir -p out13
+    cat >> ${atmo_namelist} << EOF
+
+&output_nml
+ filename_format = "out13/${EXPNAME}_out13_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
  output_interval = "PT1H"
  file_interval   = "P1D"
+ ml_varlist      = 'lwflx_up_clr', 'lwflx_dn_clr', 'lwflx_dn','lwflx_up'
  include_last    = .true.
- ml_varlist      = 'u'
+ output_grid     = .true.
+ mode            = 1
+/
+EOF
+}
+
+output_stream_14(){
+    # Outputing on Model Levels @ 1 hourly
+    # => 2.5KM regular grid for surface levels, but interpolation to 12.5KM for 3D  (TOA and surface)
+    mkdir -p out14
+    cat >> ${atmo_namelist} << EOF
+
+&output_nml
+ filename_format = "out14/${EXPNAME}_out14_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT1H"
+ file_interval   = "P1D"
+ ml_varlist      = 'swflx_up_clr', 'swflx_dn_clr', 'swflx_dn','swflx_up'
+ include_last    = .true.
+ output_grid     = .true.
+ mode            = 1
+/
+EOF
+}
+
+output_stream_15(){
+    # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
+    mkdir -p out15
+    cat >> ${atmo_namelist} << EOF
+
+&output_nml
+ filename_format = "out15/${EXPNAME}_out15_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT3H"
+ file_interval   = "P1D"
+ ml_varlist      = 'geopot','qv'
+ include_last    = .true.
+ output_grid     = .true.
+ mode            = 1
+/
+EOF
+}
+
+output_stream_16(){
+    # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
+    mkdir -p out16
+    cat >> ${atmo_namelist} << EOF
+
+&output_nml
+ filename_format = "out16/${EXPNAME}_out16_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT3H"
+ file_interval   = "P1D"
+ ml_varlist      = 'qc','qr','qi'
+ include_last    = .true.
+ output_grid     = .true.
+ mode            = 1
+/
+EOF
+}
+
+output_stream_17(){
+    # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
+    mkdir -p out17
+    cat >> ${atmo_namelist} << EOF
+
+&output_nml
+ filename_format = "out17/${EXPNAME}_out17_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT3H"
+ file_interval   = "P1D"
+ ml_varlist      = 'qs','qg','temp'
+ include_last    = .true.
+ output_grid     = .true.
+ mode            = 1
+/
+EOF
+}
+
+output_stream_18(){
+    # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
+    mkdir -p out18
+    cat >> ${atmo_namelist} << EOF
+
+&output_nml
+ filename_format = "out18/${EXPNAME}_out18_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT3H"
+ file_interval   = "P1D"
+ ml_varlist      = 'u','v','w'
+ include_last    = .true.
+ output_grid     = .true.
+ mode            = 1
+/
+EOF
+}
+
+output_stream_19(){
+    # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
+    mkdir -p out19
+    cat >> ${atmo_namelist} << EOF
+
+&output_nml
+ filename_format = "out19/${EXPNAME}_out19_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT3H"
+ file_interval   = "P1D"
+ ml_varlist      = 'rho','tke'
+ include_last    = .true.
  output_grid     = .true.
  mode            = 1
 /

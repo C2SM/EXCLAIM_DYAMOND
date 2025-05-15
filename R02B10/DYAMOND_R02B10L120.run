@@ -54,9 +54,9 @@ export EXPDIR
 # Time settings
 
 export start_date=${start_date:-"2020-01-20T00:00:00"}
-export end_date=${end_date:-"2020-01-20T06:00:00"}
+export end_date=${end_date:-"2020-02-01T00:00:00"}
 
-export restart_interval=${restart_interval:-"P10D"}
+export restart_interval=${restart_interval:-"P1M"}
 export checkpoint_interval=${checkpoint_interval:-${restart_interval}}
 
 # ----------------------------------------------------------------------------
@@ -66,7 +66,7 @@ export ACCOUNT=${ACCOUNT:-"cwd01"}
 export PARTITION=${PARTITION:-"normal"}
 
 export N_NODES=${N_NODES:-240}
-export N_IO_PROCS=${N_IO_PROCS:-14}
+export N_IO_PROCS=${N_IO_PROCS:-24}
 mpi_procs_pernode=4
 (( mpi_total_procs = N_NODES * mpi_procs_pernode ))
 
@@ -105,12 +105,12 @@ export ENABLE_IO=${ENABLE_IO:-"true"}
 
 # blocking length
 nproma=85000
-nproma_sub=5000
+nproma_sub=6000
 nblocks_c=0
 nblocks_e=1
 
 # Time steps
-timestep="PT10S"
+timestep="PT20S"
 timestep_phy=60
 
 # ----------------------------------------------------------------------------
@@ -152,10 +152,13 @@ main_atmo_nml
 
 # Output streams. Comment out to deactivate
 if [ "${ENABLE_IO}" == "true" ]; then
-    output_stream_1.1
-    output_stream_1.2
-    output_stream_1.3
-    output_stream_2
+    output_stream_1_1
+    output_stream_1_2
+    output_stream_1_3
+    output_stream_1_4
+    output_stream_1_5
+    output_stream_2_1
+    output_stream_2_2
     output_stream_3
     output_stream_4
     output_stream_5
@@ -166,6 +169,13 @@ if [ "${ENABLE_IO}" == "true" ]; then
     output_stream_10
     output_stream_11
     output_stream_12
+    output_stream_13
+    output_stream_14
+    output_stream_15
+    output_stream_16
+    output_stream_17
+    output_stream_18
+    output_stream_19
 fi
 
 # ----------------------------------------------------------------------------
@@ -175,8 +185,8 @@ link_input ${analysis_file}
 link_input ${extpar_file}
 link_input ${input_folder}/${atmo_dyn_grid}
 link_input ${ecrad_data} ecrad_data
-link_input ${icon_base_data_dir}/ECHAM6_CldOptProps.nc
 link_input ${icon_base_data_dir}/rrtmg_lw.nc
+link_input ${icon_base_data_dir}/ECHAM6_CldOptProps.nc
 
 link_input "${sst_dir}/SST_*_*_icon_grid_${gridID}_${RES}_G.nc"
 link_input "${ice_dir}/CI_*_*_icon_grid_${gridID}_${RES}_G.nc"
