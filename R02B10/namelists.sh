@@ -291,11 +291,11 @@ output_stream_1_1(){
     # FOR DYAMOND PROTOCOL # 3D Variables on native grid, 3 hourly (as per the
     # Dyamond Protocol 6 hourly), 37 pressure levels.
     # => This needs to be interpolated onto 10KM (25KM for Dyamond)
-    mkdir -p out1
+    mkdir -p out_1
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out1/${EXPNAME}_out1_1_<datetime2>"
+ filename_format = "out_1/${EXPNAME}_out_1_1_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -314,11 +314,11 @@ output_stream_1_2(){
     # FOR DYAMOND PROTOCOL # 3D Variables on native grid, 3 hourly (as per the
     # Dyamond Protocol 6 hourly), 37 pressure levels.
     # => This needs to be interpolated onto 10KM (25KM for Dyamond)
-    mkdir -p out1
+    mkdir -p out_1
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out1/${EXPNAME}_out1_2_<datetime2>"
+ filename_format = "out_1/${EXPNAME}_out_1_2_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -337,11 +337,11 @@ output_stream_1_3(){
     # FOR DYAMOND PROTOCOL # 3D Variables on native grid, 3 hourly (as per the
     # Dyamond Protocol 6 hourly), 37 pressure levels.
     # => This needs to be interpolated onto 10KM (25KM for Dyamond)
-    mkdir -p out1
+    mkdir -p out_1
     cat >> ${atmo_namelist} << EOF
 
-&output_nml
- filename_format = "out1/${EXPNAME}_out1_3_<datetime2>"
+&out_put_nml
+ filename_format = "out_1/${EXPNAME}_out_1_3_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -360,11 +360,11 @@ output_stream_1_4(){
     # FOR DYAMOND PROTOCOL # 3D Variables on native grid, 3 hourly (as per the
     # Dyamond Protocol 6 hourly), 37 pressure levels.
     # => This needs to be interpolated onto 10KM (25KM for Dyamond)
-    mkdir -p out1
+    mkdir -p out_1
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out1/${EXPNAME}_out1_4_<datetime2>"
+ filename_format = "out_1/${EXPNAME}_out_1_4_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -385,11 +385,11 @@ output_stream_1_5(){
     # Dyamond Protocol 6 hourly), 37 pressure levels. Extra Variables, not
     # required for Dyamond.
     # => This needs to be interpolated onto 10KM.
-    mkdir -p out1
+    mkdir -p out_1
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out1/${EXPNAME}_out1_5_<datetime2>"
+ filename_format = "out_1/${EXPNAME}_out_1_5_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -404,17 +404,17 @@ output_stream_1_5(){
 EOF
 }
 
-output_stream_2_1(){
+output_stream_2(){
     # FOR DYAMOND PROTOCOL, NATIVE GRID # 2D variables on Native Grid, according
     # to Dyamond protocol - [Cyclone Tracking or MCS on Native Grid, Hourly
     # Resolution]
     # => Also Interpolate onto 10KM Grid for Dyamond. (Both formats are
     # necessay)
-    mkdir -p out2
+    mkdir -p out_2
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out2/${EXPNAME}_out2_1_<datetime2>"
+ filename_format = "out_2/${EXPNAME}_out_2<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -428,18 +428,18 @@ output_stream_2_1(){
 EOF
 }
 
-output_stream_2_2(){
-    mkdir -p out2
+output_stream_3(){
+    mkdir -p out_3
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out2/${EXPNAME}_out2_2_<datetime2>"
+ filename_format = "out_3/${EXPNAME}_out_3_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
  output_interval = "PT1H"
  file_interval   = "P1D"
-ml_varlist       = 'pres_sfc','pres_msl','u_10m','v_10m','tot_prec','qv_2m','t_2m','tqc','tqi','tqv','tqr','h_snow','gust10'
+ ml_varlist      = 'pres_sfc','pres_msl','u_10m','v_10m','tot_prec','qv_2m','t_2m','tqc','tqi','tqv','tqr','h_snow','gust10'
  include_last    = .true.
  output_grid     = .true.
  mode            = 1
@@ -447,15 +447,15 @@ ml_varlist       = 'pres_sfc','pres_msl','u_10m','v_10m','tot_prec','qv_2m','t_2
 EOF
 }
 
-output_stream_3(){
+output_stream_4(){
     # FOR DYAMOND PROTOCOL, NATIVE GRID # 2D variables on Native Grid, according
     # to Dyamond protocol- [For Convection], Only 'w' is asked, but included u,v
     # for turbine impact studies (if needed)
-    mkdir -p out3
+    mkdir -p out_4
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out3/<output_filename>${EXPNAME}_out3_<datetime2>"
+ filename_format = "out_4/<output_filename>${EXPNAME}_out_4_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -470,14 +470,14 @@ output_stream_3(){
 EOF
 }
 
-output_stream_4(){
+output_stream_5(){
     # FOR DYAMOND PROTOCOL, Atmosphere 2D variables, hourly interval
     # => Need to be interpolated onto 12.5KM regular grid (25KM for Dyamond)
-    mkdir -p out4
+    mkdir -p out_5
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out4/${EXPNAME}_out4_<datetime2>"
+ filename_format = "out_5/${EXPNAME}_out_5_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -491,15 +491,15 @@ output_stream_4(){
 EOF
 }
 
-output_stream_5(){
+output_stream_6(){
     # FOR DYAMOND PROTOCOL, NATIVE GRID, Atmosphere 2D variables, hourly
     # interval, But Prof. Prein request for Native Grid.
     # => Need to be interpolated onto 12.5KM regular grid (25KM for Dyamond)
-    mkdir -p out5
+    mkdir -p out_6
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out5/${EXPNAME}_out5_<datetime2>"
+ filename_format = "out_6/${EXPNAME}_out_6_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -519,14 +519,14 @@ EOF
 }
 
 
-output_stream_6(){
+output_stream_7(){
     # FOR DYAMOND PROTOCOL , #Atmosphere 2D variables
     # => Need to be interpolated onto 12.5KM regular grid (25KM for Dyamond)
-    mkdir -p out6
+    mkdir -p out_7
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out6/${EXPNAME}_out6_<datetime2>"
+ filename_format = "out_7/${EXPNAME}_out_7_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -540,14 +540,14 @@ output_stream_6(){
 EOF
 }
 
-output_stream_7(){
+output_stream_8(){
     # CAPE and LCL for Process Studies, Hourly Resolution
     # => Need to be interpolated onto 12.5KM regular grid
-    mkdir -p out7
+    mkdir -p out_8
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out7/${EXPNAME}_out7_<datetime2>"
+ filename_format = "out_8/${EXPNAME}_out_8_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -562,14 +562,14 @@ EOF
     # LPI and LPI_MAX do not work, as they are only ported on Reduced Grid, as MeteoSwiss uses reduced grid.
 }
 
-output_stream_8(){
+output_stream_9(){
     # LAND VARIABLES @ 3 hours
     # => Need to be interpolated onto 12.5KM regular grid
-    mkdir -p out8
+    mkdir -p out_9
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out8/${EXPNAME}_out8_<datetime2>"
+ filename_format = "out_9/${EXPNAME}_out_9_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -583,14 +583,14 @@ output_stream_8(){
 EOF
 }
 
-output_stream_9(){
+output_stream_10(){
     # variables not a part of Dyamond but are of interest
     # => Need to be interpolated onto 12.5KM regular grid
-    mkdir -p out9
+    mkdir -p out_10
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out9/${EXPNAME}_out9_<datetime2>"
+ filename_format = "out_10/${EXPNAME}_out_10_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -604,15 +604,15 @@ output_stream_9(){
 EOF
 }
 
-output_stream_10(){
+output_stream_11(){
     # NATIVE GRID 3D variables hourly for tracking on 2.5KM regular grid on
     # pressure levels (On the Native Grid)
     # => Need to be interpolated onto 2.5KM regular grid
-    mkdir -p out10
+    mkdir -p out_11
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out10/${EXPNAME}_out10_<datetime2>"
+ filename_format = "out_11/${EXPNAME}_out_11_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -627,14 +627,14 @@ output_stream_10(){
 EOF
 }
 
-output_stream_11(){
+output_stream_12(){
     # Extreme Temperatures @ 3 hours
     # => Need to be interpolated onto 12.5KM regular grid
-    mkdir -p out11
+    mkdir -p out_12
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out11/${EXPNAME}_out11_<datetime2>"
+ filename_format = "out_12/${EXPNAME}_out_12_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -648,14 +648,14 @@ output_stream_11(){
 EOF
 }
 
-output_stream_12(){
+output_stream_13(){
     # Outputing on Model Levels @ 6 hourly, but interpolation for 12.5KM for 3D
     # => Need to be interpolated onto 12.5KM regular grid
-    mkdir -p out12
+    mkdir -p out_13
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out12/${EXPNAME}_out12_<datetime2>"
+ filename_format = "out_13/${EXPNAME}_out_13_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -669,20 +669,21 @@ output_stream_12(){
 EOF
 }
 
-output_stream_13(){
+output_stream_14(){
     # (NATIVE + Interpolated ) Outputing on Model Levels @ 1 hourly
     # => 2.5KM Native grid for surface levels, but interpolation to 12.5KM for 3D
-    mkdir -p out13
+    mkdir -p out_14
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out13/${EXPNAME}_out13_<datetime2>"
+ filename_format = "out_14/${EXPNAME}_out_14_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
  output_interval = "PT1H"
  file_interval   = "P1D"
- ml_varlist      = 'lwflx_up_clr', 'lwflx_dn_clr', 'lwflx_dn','lwflx_up'
+ ml_varlist      = 'lwflx_up', 'lwflx_dn', 'swflx_up', 'swflx_dn', 'lwflx_up_clr', 'lwflx_dn_clr', 'swflx_up_clr', 'swflx_dn_clr'
+ m_levels        = "1,nlev"
  include_last    = .true.
  output_grid     = .true.
  mode            = 1
@@ -690,40 +691,19 @@ output_stream_13(){
 EOF
 }
 
-output_stream_14(){
-    # Outputing on Model Levels @ 1 hourly
-    # => 2.5KM regular grid for surface levels, but interpolation to 12.5KM for 3D  (TOA and surface)
-    mkdir -p out14
-    cat >> ${atmo_namelist} << EOF
-
-&output_nml
- filename_format = "out14/${EXPNAME}_out14_<datetime2>"
- filetype        = 5 ! NetCDF4
- output_start    = "${start_date}"
- output_end      = "${end_date}"
- output_interval = "PT1H"
- file_interval   = "P1D"
- ml_varlist      = 'swflx_up_clr', 'swflx_dn_clr', 'swflx_dn','swflx_up'
- include_last    = .true.
- output_grid     = .true.
- mode            = 1
-/
-EOF
-}
-
-output_stream_15(){
+output_stream_15_1(){
     # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
-    mkdir -p out15
+    mkdir -p out_15
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out15/${EXPNAME}_out15_<datetime2>"
+ filename_format = "out_15/${EXPNAME}_out_15_1_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
  output_interval = "PT3H"
  file_interval   = "P1D"
- ml_varlist      = 'geopot','qv'
+ ml_varlist      = 'geopot'
  include_last    = .true.
  output_grid     = .true.
  mode            = 1
@@ -731,19 +711,19 @@ output_stream_15(){
 EOF
 }
 
-output_stream_16(){
+output_stream_15_2(){
     # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
-    mkdir -p out16
+    mkdir -p out_15
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out16/${EXPNAME}_out16_<datetime2>"
+ filename_format = "out_15/${EXPNAME}_out_15_2_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
  output_interval = "PT3H"
  file_interval   = "P1D"
- ml_varlist      = 'qc','qr','qi'
+ ml_varlist      = 'qv'
  include_last    = .true.
  output_grid     = .true.
  mode            = 1
@@ -751,19 +731,19 @@ output_stream_16(){
 EOF
 }
 
-output_stream_17(){
+output_stream_15_3(){
     # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
-    mkdir -p out17
+    mkdir -p out_15
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out17/${EXPNAME}_out17_<datetime2>"
+ filename_format = "out_15/${EXPNAME}_out_15_3_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
  output_interval = "PT3H"
  file_interval   = "P1D"
- ml_varlist      = 'qs','qg','temp'
+ ml_varlist      = 'qc'
  include_last    = .true.
  output_grid     = .true.
  mode            = 1
@@ -771,19 +751,19 @@ output_stream_17(){
 EOF
 }
 
-output_stream_18(){
+output_stream_15_4(){
     # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
-    mkdir -p out18
+    mkdir -p out_15
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out18/${EXPNAME}_out18_<datetime2>"
+ filename_format = "out_15/${EXPNAME}_out_15_4_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
  output_interval = "PT3H"
  file_interval   = "P1D"
- ml_varlist      = 'u','v','w'
+ ml_varlist      = 'qr'
  include_last    = .true.
  output_grid     = .true.
  mode            = 1
@@ -791,19 +771,179 @@ output_stream_18(){
 EOF
 }
 
-output_stream_19(){
+output_stream_15_5(){
     # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
-    mkdir -p out19
+    mkdir -p out_15
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out19/${EXPNAME}_out19_<datetime2>"
+ filename_format = "out_15/${EXPNAME}_out_15_5_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
  output_interval = "PT3H"
  file_interval   = "P1D"
- ml_varlist      = 'rho','tke'
+ ml_varlist      = 'qi'
+ include_last    = .true.
+ output_grid     = .true.
+ mode            = 1
+/
+EOF
+}
+
+output_stream_15_6(){
+    # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
+    mkdir -p out_15
+    cat >> ${atmo_namelist} << EOF
+
+&output_nml
+ filename_format = "out_15/${EXPNAME}_out_15_6_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT3H"
+ file_interval   = "P1D"
+ ml_varlist      = 'qs'
+ include_last    = .true.
+ output_grid     = .true.
+ mode            = 1
+/
+EOF
+}
+
+output_stream_15_7(){
+    # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
+    mkdir -p out_15
+    cat >> ${atmo_namelist} << EOF
+
+&output_nml
+ filename_format = "out_15/${EXPNAME}_out_15_7_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT3H"
+ file_interval   = "P1D"
+ ml_varlist      = 'qg'
+ include_last    = .true.
+ output_grid     = .true.
+ mode            = 1
+/
+EOF
+}
+
+output_stream_15_8(){
+    # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
+    mkdir -p out_15
+    cat >> ${atmo_namelist} << EOF
+
+&output_nml
+ filename_format = "out_15/${EXPNAME}_out_15_8_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT3H"
+ file_interval   = "P1D"
+ ml_varlist      = 'temp'
+ include_last    = .true.
+ output_grid     = .true.
+ mode            = 1
+/
+EOF
+}
+
+output_stream_15_9(){
+    # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
+    mkdir -p out_15
+    cat >> ${atmo_namelist} << EOF
+
+&output_nml
+ filename_format = "out_15/${EXPNAME}_out_15_9_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT3H"
+ file_interval   = "P1D"
+ ml_varlist      = 'u'
+ include_last    = .true.
+ output_grid     = .true.
+ mode            = 1
+/
+EOF
+}
+
+output_stream_15_10(){
+    # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
+    mkdir -p out_15
+    cat >> ${atmo_namelist} << EOF
+
+&output_nml
+ filename_format = "out_15/${EXPNAME}_out_15_10_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT3H"
+ file_interval   = "P1D"
+ ml_varlist      = 'v'
+ include_last    = .true.
+ output_grid     = .true.
+ mode            = 1
+/
+EOF
+}
+
+output_stream_15_11(){
+    # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
+    mkdir -p out_15
+    cat >> ${atmo_namelist} << EOF
+
+&output_nml
+ filename_format = "out_15/${EXPNAME}_out_15_11_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT3H"
+ file_interval   = "P1D"
+ ml_varlist      = 'w'
+ include_last    = .true.
+ output_grid     = .true.
+ mode            = 1
+/
+EOF
+}
+
+output_stream_15_12(){
+    # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
+    mkdir -p out_15
+    cat >> ${atmo_namelist} << EOF
+
+&output_nml
+ filename_format = "out_15/${EXPNAME}_out_15_12_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT3H"
+ file_interval   = "P1D"
+ ml_varlist      = 'rho'
+ include_last    = .true.
+ output_grid     = .true.
+ mode            = 1
+/
+EOF
+}
+
+output_stream_15_13(){
+    # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
+    mkdir -p out_15
+    cat >> ${atmo_namelist} << EOF
+
+&output_nml
+ filename_format = "out_15/${EXPNAME}_out_15_13_<datetime2>"
+ filetype        = 5 ! NetCDF4
+ output_start    = "${start_date}"
+ output_end      = "${end_date}"
+ output_interval = "PT3H"
+ file_interval   = "P1D"
+ ml_varlist      = 'tke'
  include_last    = .true.
  output_grid     = .true.
  mode            = 1
