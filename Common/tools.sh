@@ -1,17 +1,22 @@
 #!/usr/bin/bash
 
 submit(){
-   (set -x
-    sbatch \
-        --account="${ACCOUNT}" \
-        --partition="${PARTITION}" \
-        --uenv="${UENV}" \
-        --view="${VIEW}" \
-        --nodes="${N_NODES}" \
-        --time="${WALL_TIME}" \
-        --job-name="${EXPNAME}" \
-        --output="${EXPDIR}/${EXPNAME}.%j.o" \
-        "${SCRIPT_PATH}")
+    cmd="sbatch --account=${ACCOUNT} --partition=${PARTITION} --uenv=${UENV} --view=${VIEW}"
+    cmd+=" --nodes=${N_NODES} --time=${WALL_TIME} --job-name=${EXPNAME} --output=${EXPDIR}/${EXPNAME}.%j.o"
+    [ -n "${RESERVATION}" ] && cmd+=" --reservation=${RESERVATION}"
+    cmd+=" ${SCRIPT_PATH}"
+    (set -x
+     ${cmd})
+    # sbatch \
+    #     --account="${ACCOUNT}" \
+    #     --partition="${PARTITION}" \
+    #     --uenv="${UENV}" \
+    #     --view="${VIEW}" \
+    #     --nodes="${N_NODES}" \
+    #     --time="${WALL_TIME}" \
+    #     --job-name="${EXPNAME}" \
+    #     --output="${EXPDIR}/${EXPNAME}.%j.o" \
+    #     "${SCRIPT_PATH}")
 }
 
 first_submit(){
@@ -37,13 +42,24 @@ run_model(){
 
    date
 
+   NTASKS_PER_NODE=4
+   (( N_TASKS = N_NODES * NTASKS_PER_NODE ))
+   # - ML - to try
+   # NTASKS_PER_NODE=5
+   # COMPUTE_TASKS_PER_NODE=4
+   # (( N_TASKS = N_NODES * COMPUTE_TASKS_PER_NODE + N_IO_TASKS ))
+   DISTRIBUTION="cyclic"
+   # - ML - to try
+   # DISTRIBUTION="plane=4"
+
    (set -x
     srun \
-        --ntasks="${mpi_total_procs}" \
-        --ntasks-per-node="${mpi_procs_pernode}" \
+        --ntasks="${N_TASKS}" \
+        --ntasks-per-node="${NTASKS_PER_NODE}" \
         --threads-per-core=1 \
-        --distribution="cyclic" \
-        "${SCRIPT_DIR}/../Common/santis_gpu.sh" "./icon")
+        --distribution="${DISTRIBUTION}" \
+        "${SCRIPT_DIR}/../Common/santis_gpu.sh" "./icon"
+   )
 
    date
 

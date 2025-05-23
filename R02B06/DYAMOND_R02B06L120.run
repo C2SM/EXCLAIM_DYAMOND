@@ -65,11 +65,10 @@ export checkpoint_interval=${checkpoint_interval:-${restart_interval}}
 
 export ACCOUNT=${ACCOUNT:-"cwp03"}
 export PARTITION=${PARTITION:-"normal"}
+export RESERVATION=${RESERVATION:-}
 
 export N_NODES=${N_NODES:-2}
-export N_IO_PROCS=${N_IO_PROCS:-1}
-mpi_procs_pernode=4
-(( mpi_total_procs = N_NODES * mpi_procs_pernode ))
+export N_IO_TASKS=${N_IO_TASKS:-1}
 
 export WALL_TIME=${WALL_TIME:-"00:10:00"}
 
