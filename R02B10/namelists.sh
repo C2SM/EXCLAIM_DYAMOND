@@ -81,17 +81,17 @@ main_atmo_nml(){
 /
 
 &io_nml
- itype_pres_msl       = 5        ! Method for comoputing mean sea level pressure (Mixture of IFS and GME model DWD)
- itype_rh             = 1        ! RH w.r.t. water (WMO type Water only)
- restart_file_type    = 5        ! 4: netcdf2, 5: netcdf4  (Consistent across model output, netcdf4)
+ itype_pres_msl       = 5         ! Method for comoputing mean sea level pressure (Mixture of IFS and GME model DWD)
+ itype_rh             = 1         ! RH w.r.t. water (WMO type Water only)
+ restart_file_type    = 5         ! 4: netcdf2, 5: netcdf4  (Consistent across model output, netcdf4)
  restart_write_mode   = "joint procs multifile"  ! For Large Runs Joint procs is recomemded from our experience
- lflux_avg            = .true.   ! "FALSE" output fluxes are accumulated from the beginning of the run, "TRUE" average values
- lnetcdf_flt64_output = .false.  ! Default value is false (CK)
- precip_interval      = "P1D"    ! NEW ! Works The precipitation value is accumulated in these interval otherwise accumulated fromm begining of the run
- runoff_interval      = "P1D"    ! NEW ! Works The runoff is accumalted in this inetrval else accumulated from bengining.
- maxt_interval        = "P1D"    ! NEW ! Works Interval at which Max/Min 2m temperture are calculated
- melt_interval        = "P1D"    ! NEW ! Works CLM community has this , Can not find discription
- lmask_boundary       = .true.   ! NEW ! Works if interpolation zone should be masked in triangular output.
+ lflux_avg            = .true.    ! "FALSE" output fluxes are accumulated from the beginning of the run, "TRUE" average values
+ lnetcdf_flt64_output = .false.   ! Default value is false (CK)
+ precip_interval      = "PT15M"   ! NEW ! Works The precipitation value is accumulated in these interval otherwise accumulated fromm begining of the run
+ runoff_interval      = "PT3H"    ! NEW ! Works The runoff is accumalted in this inetrval else accumulated from bengining.
+ maxt_interval        = "PT3H"    ! NEW ! Works Interval at which Max/Min 2m temperture are calculated
+ melt_interval        = "PT3H"    ! NEW ! Works CLM community has this , Can not find discription
+ lmask_boundary       = .true.    ! NEW ! Works if interpolation zone should be masked in triangular output.
  dt_hailcast          = 900.
 /
 
