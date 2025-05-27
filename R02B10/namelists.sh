@@ -340,7 +340,7 @@ output_stream_1_3(){
     mkdir -p out_1_3
     cat >> ${atmo_namelist} << EOF
 
-&out_put_nml
+&output_nml
  filename_format = "out_1_3/${EXPNAME}_out_1_3_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
@@ -659,7 +659,7 @@ output_stream_13(){
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
- output_interval = "PT6H"
+ output_interval = "PT3H"
  file_interval   = "P1D"
  ml_varlist      = 'pres'
  include_last    = .true.
