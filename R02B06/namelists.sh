@@ -55,7 +55,7 @@ main_atmo_nml(){
  l_test_openmp                = .false.         ! From CLM namelist  (Used for OpenMP verification)
  l_log_checks                 = .true.          ! From CLM namelist  (True only for debugging)
  num_io_procs                 = ${N_IO_TASKS}   ! Suggestion (One Node for one set of variables)
- num_restart_procs            = 0               ! For Large Restart chuck, use enough number of Processors
+ num_restart_procs            = ${N_RST_TASKS}
  io_proc_chunk_size           = 2               ! Used for Large Data writing requiring large memory (eg., 3D files)
  iorder_sendrecv              = 3               ! From CLM namelist  (isend/irec)
 ! itype_comm                   = 1           !NEW    ! From CLM namelist  (use local memory)
@@ -100,7 +100,7 @@ main_atmo_nml(){
  itype_pres_msl               = 5       ! Method for comoputing mean sea level pressure (Mixture of IFS and GME model DWD)
  itype_rh                     = 1       ! RH w.r.t. water (WMO type Water only)
  restart_file_type            = 5       ! 4: netcdf2, 5: netcdf4  (Consistent across model output, netcdf4)
- restart_write_mode           = "joint procs multifile"    ! For Large Runs Joint procs is recomemded from our experience
+ restart_write_mode           = "${restart_mode}"
  lflux_avg                    = .true.   ! "FALSE" output fluxes are accumulated from the beginning of the run, "TRUE" average values
  lnetcdf_flt64_output         = .false.  ! Default value is false (CK)
  precip_interval              = "PT1H"   !NEW ! Works The precipitation value is accumulated in these interval otherwise accumulated fromm begining of the run

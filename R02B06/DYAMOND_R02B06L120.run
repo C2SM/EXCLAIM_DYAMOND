@@ -69,6 +69,7 @@ export RESERVATION=${RESERVATION:-}
 
 export N_NODES=${N_NODES:-2}
 export N_IO_TASKS=${N_IO_TASKS:-1}
+export N_RST_TASKS=${N_RST_TASKS:-0}
 
 export WALL_TIME=${WALL_TIME:-"00:10:00"}
 
@@ -102,6 +103,11 @@ export OMP_STACKSIZE=200M
 # en/dis-able I/O
 export ENABLE_IO=${ENABLE_IO:-"true"}
 [ "${ENABLE_IO}" == "true" ] || export N_IO_PROCS=0
+
+# restart
+export restart_mode=${restart_mode:-"joint procs multifile"}
+[ "${restart_mode}" == "joint procs multifile" ] && export N_RST_TASKS=0
+[ "${restart_mode}" == "async" ] && [ "${N_RST_TASKS}" == "0" ] && (echo "ERROR: async restart mode needs num_restart_procs > 0"; exit 1)
 
 # blocking length
 nproma=85000

@@ -7,31 +7,40 @@ submit(){
     cmd+=" ${SCRIPT_PATH}"
     (set -x
      ${cmd})
-    # sbatch \
-    #     --account="${ACCOUNT}" \
-    #     --partition="${PARTITION}" \
-    #     --uenv="${UENV}" \
-    #     --view="${VIEW}" \
-    #     --nodes="${N_NODES}" \
-    #     --time="${WALL_TIME}" \
-    #     --job-name="${EXPNAME}" \
-    #     --output="${EXPDIR}/${EXPNAME}.%j.o" \
-    #     "${SCRIPT_PATH}")
 }
 
 first_submit(){
    # In the case of a first execution of that script directly from the command
    # line, submit it using variables like EXPDIR, nodes, walltime, ... and exit
    if [ "${SUBMITTED}" == "false" ]; then
-       export FIRST_EXECUTION="false"
        if [ ! -d "${EXPDIR}" ]; then
            echo "EXPDIR does not exist. Creating ${EXPDIR}..."
            mkdir -p "${EXPDIR}"
        else
            echo "EXPDIR already exists at ${EXPDIR}"
        fi
+       export FIRST_EXECUTION="false"
        export FIRST_SUBMIT="true"
-       submit
+
+       # Store required script and repo path elements
+       SCRIPT_NAME="$(basename "${SCRIPT_PATH}")"
+       SCRIPT_DIR="$(dirname "${SCRIPT_PATH}")"
+       CASE_NAME="$(basename "${SCRIPT_DIR}")"
+       ROOT_DIR="$(realpath "${SCRIPT_DIR}/..")"
+       ROOT_NAME="$(basename "${ROOT_DIR}")"
+
+       # copy repo to EXPDIR if we're not already executing from there
+       if [ "${SCRIPT_PATH}" == "${EXPDIR}/${ROOT_NAME}/${CASE_NAME}/${SCRIPT_NAME}" ]; then
+           echo "already executing from EXPDIR"
+       else
+           echo "sending scripts to EXPDIR"
+           rsync -avq --delete "${ROOT_DIR}" "${EXPDIR}"
+       fi
+
+       pushd "${EXPDIR}">/dev/null 2>&1 || exit 1
+       # overwrite SCRIPT_PATH for this first submission
+       SCRIPT_PATH="./${ROOT_NAME}/${CASE_NAME}/${SCRIPT_NAME}" submit
+       popd >/dev/null 2>&1 || exit 1
        exit $?
    fi
 }
@@ -42,15 +51,20 @@ run_model(){
 
    date
 
+   # - ML - ORIGINAL
    NTASKS_PER_NODE=4
    (( N_TASKS = N_NODES * NTASKS_PER_NODE ))
-   # - ML - to try
+   # - ML - TEST
    # NTASKS_PER_NODE=5
    # COMPUTE_TASKS_PER_NODE=4
-   # (( N_TASKS = N_NODES * COMPUTE_TASKS_PER_NODE + N_IO_TASKS ))
+   # (( N_TASKS = N_NODES * COMPUTE_TASKS_PER_NODE + N_IO_TASKS + N_RST_TASKS ))
+   # - ML - END TEST
+
+   # - ML - ORIGINAL
    DISTRIBUTION="cyclic"
-   # - ML - to try
+   # - ML - TEST (only compatible with try from above)
    # DISTRIBUTION="plane=4"
+   # - ML - END TEST
 
    (set -x
     srun \
