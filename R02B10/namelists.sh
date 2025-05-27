@@ -291,11 +291,11 @@ output_stream_1_1(){
     # FOR DYAMOND PROTOCOL # 3D Variables on native grid, 3 hourly (as per the
     # Dyamond Protocol 6 hourly), 37 pressure levels.
     # => This needs to be interpolated onto 10KM (25KM for Dyamond)
-    mkdir -p out_1
+    mkdir -p out_1_1
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out_1/${EXPNAME}_out_1_1_<datetime2>"
+ filename_format = "out_1_1/${EXPNAME}_out_1_1_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -314,11 +314,11 @@ output_stream_1_2(){
     # FOR DYAMOND PROTOCOL # 3D Variables on native grid, 3 hourly (as per the
     # Dyamond Protocol 6 hourly), 37 pressure levels.
     # => This needs to be interpolated onto 10KM (25KM for Dyamond)
-    mkdir -p out_1
+    mkdir -p out_1_2
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out_1/${EXPNAME}_out_1_2_<datetime2>"
+ filename_format = "out_1_2/${EXPNAME}_out_1_2_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -337,11 +337,11 @@ output_stream_1_3(){
     # FOR DYAMOND PROTOCOL # 3D Variables on native grid, 3 hourly (as per the
     # Dyamond Protocol 6 hourly), 37 pressure levels.
     # => This needs to be interpolated onto 10KM (25KM for Dyamond)
-    mkdir -p out_1
+    mkdir -p out_1_3
     cat >> ${atmo_namelist} << EOF
 
 &out_put_nml
- filename_format = "out_1/${EXPNAME}_out_1_3_<datetime2>"
+ filename_format = "out_1_3/${EXPNAME}_out_1_3_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -360,11 +360,11 @@ output_stream_1_4(){
     # FOR DYAMOND PROTOCOL # 3D Variables on native grid, 3 hourly (as per the
     # Dyamond Protocol 6 hourly), 37 pressure levels.
     # => This needs to be interpolated onto 10KM (25KM for Dyamond)
-    mkdir -p out_1
+    mkdir -p out_1_4
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out_1/${EXPNAME}_out_1_4_<datetime2>"
+ filename_format = "out_1_4/${EXPNAME}_out_1_4_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -385,11 +385,11 @@ output_stream_1_5(){
     # Dyamond Protocol 6 hourly), 37 pressure levels. Extra Variables, not
     # required for Dyamond.
     # => This needs to be interpolated onto 10KM.
-    mkdir -p out_1
+    mkdir -p out_1_5
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out_1/${EXPNAME}_out_1_5_<datetime2>"
+ filename_format = "out_1_5/${EXPNAME}_out_1_5_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -693,11 +693,11 @@ EOF
 
 output_stream_15_1(){
     # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
-    mkdir -p out_15
+    mkdir -p out_15_1
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out_15/${EXPNAME}_out_15_1_<datetime2>"
+ filename_format = "out_15_1/${EXPNAME}_out_15_1_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -713,11 +713,11 @@ EOF
 
 output_stream_15_2(){
     # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
-    mkdir -p out_15
+    mkdir -p out_15_2
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out_15/${EXPNAME}_out_15_2_<datetime2>"
+ filename_format = "out_15_2/${EXPNAME}_out_15_2_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -733,11 +733,11 @@ EOF
 
 output_stream_15_3(){
     # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
-    mkdir -p out_15
+    mkdir -p out_15_3
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out_15/${EXPNAME}_out_15_3_<datetime2>"
+ filename_format = "out_15_3/${EXPNAME}_out_15_3_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -753,11 +753,11 @@ EOF
 
 output_stream_15_4(){
     # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
-    mkdir -p out_15
+    mkdir -p out_15_4
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out_15/${EXPNAME}_out_15_4_<datetime2>"
+ filename_format = "out_15_4/${EXPNAME}_out_15_4_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -773,11 +773,11 @@ EOF
 
 output_stream_15_5(){
     # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
-    mkdir -p out_15
+    mkdir -p out_15_5
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out_15/${EXPNAME}_out_15_5_<datetime2>"
+ filename_format = "out_15_5/${EXPNAME}_out_15_5_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -793,11 +793,11 @@ EOF
 
 output_stream_15_6(){
     # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
-    mkdir -p out_15
+    mkdir -p out_15_6
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out_15/${EXPNAME}_out_15_6_<datetime2>"
+ filename_format = "out_15_6/${EXPNAME}_out_15_6_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -813,11 +813,11 @@ EOF
 
 output_stream_15_7(){
     # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
-    mkdir -p out_15
+    mkdir -p out_15_7
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out_15/${EXPNAME}_out_15_7_<datetime2>"
+ filename_format = "out_15_7/${EXPNAME}_out_15_7_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -833,11 +833,11 @@ EOF
 
 output_stream_15_8(){
     # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
-    mkdir -p out_15
+    mkdir -p out_15_8
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out_15/${EXPNAME}_out_15_8_<datetime2>"
+ filename_format = "out_15_8/${EXPNAME}_out_15_8_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -853,11 +853,11 @@ EOF
 
 output_stream_15_9(){
     # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
-    mkdir -p out_15
+    mkdir -p out_15_9
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out_15/${EXPNAME}_out_15_9_<datetime2>"
+ filename_format = "out_15_9/${EXPNAME}_out_15_9_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -873,11 +873,11 @@ EOF
 
 output_stream_15_10(){
     # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
-    mkdir -p out_15
+    mkdir -p out_15_10
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out_15/${EXPNAME}_out_15_10_<datetime2>"
+ filename_format = "out_15_10/${EXPNAME}_out_15_10_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -893,11 +893,11 @@ EOF
 
 output_stream_15_11(){
     # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
-    mkdir -p out_15
+    mkdir -p out_15_11
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out_15/${EXPNAME}_out_15_11_<datetime2>"
+ filename_format = "out_15_11/${EXPNAME}_out_15_11_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -913,11 +913,11 @@ EOF
 
 output_stream_15_12(){
     # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
-    mkdir -p out_15
+    mkdir -p out_15_12
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out_15/${EXPNAME}_out_15_12_<datetime2>"
+ filename_format = "out_15_12/${EXPNAME}_out_15_12_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
@@ -933,11 +933,11 @@ EOF
 
 output_stream_15_13(){
     # Outputing on Model Levels @ 3 hourly for EXCLAIM Stress Test
-    mkdir -p out_15
+    mkdir -p out_15_13
     cat >> ${atmo_namelist} << EOF
 
 &output_nml
- filename_format = "out_15/${EXPNAME}_out_15_13_<datetime2>"
+ filename_format = "out_15_13/${EXPNAME}_out_15_13_<datetime2>"
  filetype        = 5 ! NetCDF4
  output_start    = "${start_date}"
  output_end      = "${end_date}"
