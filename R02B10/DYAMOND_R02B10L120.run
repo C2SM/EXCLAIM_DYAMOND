@@ -127,7 +127,7 @@ icon_base_data_dir="${basedir}/data"
 ecrad_data=${basedir}/externals/ecrad/data
 
 atmo_dyn_grid="icon_grid_${gridID}_${RES}_G.nc"
-analysis_file=${input_folder}/initial_conditions/ifs2icon_2020012000_${gridID}_${RES}_G.nc
+analysis_file=${input_folder}/initial_conditions/ifs2icon_2020012000_${gridID}_${RES}_G_soil.nc
 extpar_file=${input_folder}/external_parameter/external_parameter_icon_${gridID}_${RES}_G_tiles.nc
 
 sst_dir=${input_folder}/sst_and_seaice/r0001
