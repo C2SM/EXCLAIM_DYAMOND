@@ -94,8 +94,12 @@ run_model(){
    echo
    echo
 
+   echo "Accounting"
+   sacct -j ${SLURM_JOB_ID} --format "ElapsedRaw, CPUTimeRAW, ConsumedEnergyRaw"
+
    # Resubmit in case of restart
    if [ "${finish_status}" == " RESTART" ]; then
+       echo
        echo "submitting next chunk"
        export lrestart=.true.
        submit
