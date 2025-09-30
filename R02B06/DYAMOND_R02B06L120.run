@@ -127,11 +127,12 @@ icon_base_data_dir="${basedir}/data"
 ecrad_data=${basedir}/externals/ecrad/data
 
 atmo_dyn_grid="icon_grid_${gridID}_${RES}_G.nc"
-analysis_file=${input_folder}/initial_conditions/ifs2icon_2020012000_${gridID}_${RES}_G.nc 
-extpar_file=${input_folder}/external_parameter/external_parameter_icon_${gridID}_${RES}_G_tiles.nc
+analysis_date="${start_date:0:4}${start_date:5:2}${start_date:8:2}${start_date:11:2}"
+analysis_file="${input_folder}/initial_conditions/ifs2icon_${analysis_date}_${gridID}_${RES}_G.nc"
+extpar_file="${input_folder}/external_parameter/external_parameter_icon_${gridID}_${RES}_G_tiles.nc"
 
-sst_dir=/capstor/scratch/cscs/ppothapa/Dyamond_W_SO_SST_PREP/ESACCI-SST/final_output_daily_R02B06
-ice_dir=/capstor/scratch/cscs/ppothapa/Dyamond_W_SO_SST_PREP/ESACCI-SEAICE/final_output_daily/R02B06
+sst_dir=${input_folder}/sst_and_seaice/r0001
+ice_dir=${input_folder}/sst_and_seaice/r0001
 
 ozone_dir=${input_folder}/ozone/r0001
 
