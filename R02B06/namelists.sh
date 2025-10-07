@@ -45,12 +45,13 @@ EOF
 # -------------------------
 
 main_atmo_nml(){
-    cat > ${atmo_namelist} << EOF
-&parallel_nml
-! nproma                       = ${nproma}             ! CK nproma  after Abishek: edge/(compute nodes)+20
- nblocks_e                    = ${nblocks_e}
- nblocks_c                    = ${nblocks_c}       ! CK for GPU calculations according Abishek = 1 for icon dsl
- nproma_sub                   = ${nproma_sub}              ! CK adapted according to JJ for Daint, saves compute nodes
+    [ "${TARGET}" == "gpu" ] && ecrad_isolver=2 || ecrad_isolver=0
+    echo "&parallel_nml" > ${atmo_namelist}
+    [ -n ${nproma} ]     && echo " nproma                       = ${nproma}             ! CK nproma  after Abishek: edge/(compute nodes)+20"          >> ${atmo_namelist}
+    [ -n ${nblocks_e} ]  && echo " nblocks_e                    = ${nblocks_e}"                                                                       >> ${atmo_namelist}
+    [ -n ${nblocks_c} ]  && echo " nblocks_c                    = ${nblocks_c}          ! CK for GPU calculations according Abishek = 1 for icon dsl" >> ${atmo_namelist}
+    [ -n ${nproma_sub} ] && echo " nproma_sub                   = ${nproma_sub}         ! CK adapted according to JJ for Daint, saves compute nodes"  >> ${atmo_namelist}
+    cat >> ${atmo_namelist} << EOF
  p_test_run                   = .false.         ! From CLM namelist  (Used for MPI Verification)
  l_test_openmp                = .false.         ! From CLM namelist  (Used for OpenMP verification)
  l_log_checks                 = .true.          ! From CLM namelist  (True only for debugging)
@@ -140,7 +141,7 @@ main_atmo_nml(){
 /
 
 &radiation_nml
- ecrad_isolver                =   2   ! CK comment (for GPU =2 , CPU = 0)
+ ecrad_isolver                = ${ecrad_isolver}   ! CK comment (for GPU =2 , CPU = 0)
  irad_o3                      =  79   !5 Ozone climatology ! PPK changed to 0 CLM communitny recomendation   (ice from tracer variable)
  irad_o2                      = 2           ! Tracer variable (CLM commnity)
  irad_cfc11                   = 2           ! Tracer variableTracer variable (co2, ch4,n20,o2,cfc11,cfc12))
@@ -279,7 +280,7 @@ main_atmo_nml(){
 ! This corresponds to the TERRA namelist based on the CLM community recomendation
 
 &lnd_nml
-  sstice_mode    = 6  ! 4: SST and sea ice fraction are updated daily,
+  sstice_mode    = 4  ! 4: SST and sea ice fraction are updated daily,
                       !    based on actual monthly means
   ntiles         = 3
   nlev_snow      = 1

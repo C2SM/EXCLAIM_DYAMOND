@@ -51,20 +51,29 @@ run_model(){
 
    date
 
-   # - ML - ORIGINAL
-   NTASKS_PER_NODE=4
-   (( N_TASKS = N_NODES * NTASKS_PER_NODE ))
-   # - ML - TEST
-   # NTASKS_PER_NODE=5
-   # COMPUTE_TASKS_PER_NODE=4
-   # (( N_TASKS = N_NODES * COMPUTE_TASKS_PER_NODE + N_IO_TASKS + N_RST_TASKS ))
-   # - ML - END TEST
+   if [ "${TARGET}" == "gpu" ]; then
+       
+       # - ML - ORIGINAL
+       NTASKS_PER_NODE=4
+       (( N_TASKS = N_NODES * NTASKS_PER_NODE ))
+       # - ML - TEST
+       # NTASKS_PER_NODE=5
+       # COMPUTE_TASKS_PER_NODE=4
+       # (( N_TASKS = N_NODES * COMPUTE_TASKS_PER_NODE + N_IO_TASKS + N_RST_TASKS ))
+       # - ML - END TEST
 
-   # - ML - ORIGINAL
-   DISTRIBUTION="cyclic"
-   # - ML - TEST (only compatible with try from above)
-   # DISTRIBUTION="plane=4"
-   # - ML - END TEST
+       # - ML - ORIGINAL
+       DISTRIBUTION="cyclic"
+       # - ML - TEST (only compatible with try from above)
+       # DISTRIBUTION="plane=4"
+       # - ML - END TEST
+       wrapper="santis_gpu.sh"
+   else
+       NTASKS_PER_NODE=248
+       (( N_TASKS = N_NODES * NTASKS_PER_NODE ))
+       DISTRIBUTION="block"
+       wrapper="santis_cpu.sh"
+   fi
 
    (set -x
     srun \
@@ -72,7 +81,7 @@ run_model(){
         --ntasks-per-node="${NTASKS_PER_NODE}" \
         --threads-per-core=1 \
         --distribution="${DISTRIBUTION}" \
-        "${SCRIPT_DIR}/../Common/santis_gpu.sh" "./icon"
+        "${SCRIPT_DIR}/../Common/${wrapper}" "./icon"
    )
 
    date
@@ -126,12 +135,12 @@ link_item(){
 }
 
 link_input(){
-   source="${1}"
+   sources="${1}"
    target="${2:-}"
-   if [ -d "${source}" ]; then
-       link_item "${source}" "${target}"
+   if [ -d "${sources}" ]; then
+       link_item "${sources}" "${target}"
    else
-       for src in ${source}; do
+       for src in ${sources}; do
            link_item "${src}" "${target}"
        done
    fi

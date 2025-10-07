@@ -29,6 +29,7 @@ EOF
 }
 
 main_atmo_nml(){
+    [ "${TARGET}" == "gpu" ] && ecrad_isolver=2 || ecrad_isolver=0
     cat > ${atmo_namelist} << EOF
 &parallel_nml
 ! nproma             = $nproma         ! CK nproma  after Abishek: edge/(compute nodes)+20
@@ -125,7 +126,7 @@ main_atmo_nml(){
 /
 
 &radiation_nml
- ecrad_isolver   = 2           ! CK comment (for GPU =2 , CPU = 0)
+ ecrad_isolver   = ${ecrad_isolver}   ! CK comment (for GPU =2 , CPU = 0)
  irad_o3         = 5           ! ! PPK changed to 0 CLM communitny recomendation   (ice from tracer variable)
  irad_o2         = 2           ! Tracer variable (CLM commnity)
  irad_cfc11      = 2           ! Tracer variableTracer variable (co2, ch4,n20,o2,cfc11,cfc12))

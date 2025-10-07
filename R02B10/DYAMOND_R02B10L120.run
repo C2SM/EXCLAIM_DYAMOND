@@ -35,6 +35,12 @@ source "${SCRIPT_DIR}/../Common/tools.sh"
 RES=R02B10
 gridID=0017
 
+export TARGET=${TARGET:-"gpu"}
+if [ "${TARGET}" != "cpu" ] && [ "${TARGET}" != "gpu" ]; then
+    echo "ERROR: TARGET must either be cpu or gpu, go ${TARGET}"
+    exit 1
+fi
+
 export basedir=${basedir:-"/capstor/scratch/cscs/ppothapa/ICON-DSL_04_2025_bugfix/todi_compilation_liskov/icon-exclaim/build_dsl"}
 if [ -z "${ICON_EXE}" ]; then
     ICON_EXE="${basedir}/bin/icon"
@@ -82,14 +88,17 @@ first_submit
 # ----------------------------------------------------------------------------
 # Runtime environment variables
 
-export NVCOMPILER_ACC_SYNCHRONOUS=1
 export FI_CXI_SAFE_DEVMEM_COPY_THRESHOLD=0
 export FI_CXI_RX_MATCH_MODE=software
 export FI_MR_CACHE_MONITOR=disabled
-export MPICH_GPU_SUPPORT_ENABLED=1
-export NVCOMPILER_ACC_DEFER_UPLOADS=1
+
 export NVCOMPILER_TERM=trace
-export CUDA_BUFFER_PAGE_IN_THRESHOLD_MS=0.001
+if [ "${TARGET}" == "gpu" ]; then
+    export MPICH_GPU_SUPPORT_ENABLED=1
+    export NVCOMPILER_ACC_SYNCHRONOUS=1
+    export NVCOMPILER_ACC_DEFER_UPLOADS=1
+    export CUDA_BUFFER_PAGE_IN_THRESHOLD_MS=0.001
+fi
 
 export OMP_NUM_THREADS=1
 export ICON_THREADS=1
@@ -110,8 +119,8 @@ export restart_mode=${restart_mode:-"joint procs multifile"}
 [ "${restart_mode}" == "async" ] && [ "${N_RST_TASKS}" == "0" ] && (echo "ERROR: async restart mode needs num_restart_procs > 0"; exit 1)
 
 # blocking length
-nproma=85000
-nproma_sub=6000
+export nproma=${nproma:-85000}
+export nproma_sub=${nproma_sub:-6000}
 nblocks_c=0
 nblocks_e=1
 
