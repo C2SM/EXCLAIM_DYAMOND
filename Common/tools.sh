@@ -118,7 +118,10 @@ run_model(){
 link_item(){
    src_item="${1}"
    target_item="${2:-}"
-   [ -r "${src_item}" ] || (echo "ERROR ${src_item} not available"; exit 1)
+   if [ ! -r "${src_item}" ]; then
+       echo "ERROR ${src_item} not available"
+       exit 1
+   fi
    src_item_name=$(basename "${src_item}")
    if [ -d "${target_item}" ]; then
        trg_item="${target_item}/${src_item_name}"
