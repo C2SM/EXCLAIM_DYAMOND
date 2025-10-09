@@ -282,6 +282,8 @@ main_atmo_nml(){
 &lnd_nml
   sstice_mode    = 4  ! 4: SST and sea ice fraction are updated daily,
                       !    based on actual monthly means
+  sst_td_filename = "${local_sst_dir}/SST_<year>_<month>_<gridfile>"
+  ci_td_filename = "${local_ci_dir}/CI_<year>_<month>_<gridfile>"
   ntiles         = 3
   nlev_snow      = 1
   zml_soil       = 0.005,0.02,0.06,0.18,0.54,1.62,4.86,14.58
