@@ -135,6 +135,9 @@ timestep_phy=180
 # ----------------------------------------------------------------------------
 # Set various input paths
 
+local_sst_dir="SST"
+local_ci_dir="CI"
+
 input_folder="/capstor/store/cscs/exclaim/excp01/ppothapa/data_from_santis/grids/MPI_grids/atmo/${RES}"
 icon_base_data_dir="${basedir}/data"
 ecrad_data=${basedir}/externals/ecrad/data
@@ -193,8 +196,10 @@ link_input ${ecrad_data} ecrad_data
 link_input ${icon_base_data_dir}/ECHAM6_CldOptProps.nc
 link_input ${icon_base_data_dir}/rrtmg_lw.nc
 
-link_input "${sst_dir}/SST_*_*_icon_grid_${gridID}_${RES}_G.nc"
-link_input "${ice_dir}/CI_*_*_icon_grid_${gridID}_${RES}_G.nc"
+mkdir -p ${local_sst_dir}
+link_input "${sst_dir}/SST_*_*_${atmo_dyn_grid}" ${local_sst_dir}
+mkdir -p ${local_ci_dir}
+link_input "${ice_dir}/CI_*_*_${atmo_dyn_grid}" ${local_ci_dir}
 
 link_input "${ozone_dir}/bc_ozone_2*.nc"
 
